@@ -1,0 +1,10 @@
+C:\Users\Home\source\repos\QueueFightersGameWinForm\QueueFightersGameWinForm\bin\Debug\QueueFightersGameWinForm.exe.config
+C:\Users\Home\source\repos\QueueFightersGameWinForm\QueueFightersGameWinForm\bin\Debug\QueueFightersGameWinForm.exe
+C:\Users\Home\source\repos\QueueFightersGameWinForm\QueueFightersGameWinForm\bin\Debug\QueueFightersGameWinForm.pdb
+C:\Users\Home\source\repos\QueueFightersGameWinForm\QueueFightersGameWinForm\obj\Debug\QueueFightersGameWinForm.csproj.AssemblyReference.cache
+C:\Users\Home\source\repos\QueueFightersGameWinForm\QueueFightersGameWinForm\obj\Debug\QueueFightersGameWinForm.Form1.resources
+C:\Users\Home\source\repos\QueueFightersGameWinForm\QueueFightersGameWinForm\obj\Debug\QueueFightersGameWinForm.Properties.Resources.resources
+C:\Users\Home\source\repos\QueueFightersGameWinForm\QueueFightersGameWinForm\obj\Debug\QueueFightersGameWinForm.csproj.GenerateResource.cache
+C:\Users\Home\source\repos\QueueFightersGameWinForm\QueueFightersGameWinForm\obj\Debug\QueueFightersGameWinForm.csproj.CoreCompileInputs.cache
+C:\Users\Home\source\repos\QueueFightersGameWinForm\QueueFightersGameWinForm\obj\Debug\QueueFightersGameWinForm.exe
+C:\Users\Home\source\repos\QueueFightersGameWinForm\QueueFightersGameWinForm\obj\Debug\QueueFightersGameWinForm.pdb
