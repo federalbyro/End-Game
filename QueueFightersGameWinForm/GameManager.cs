@@ -18,29 +18,38 @@ namespace QueueFightGame
             blueTeam = new Team("Blue");
 
             CreatFighters();
-            Fight();
+            Battle();
         }
 
         public void CreatFighters()
         {
             WeakFighter weakFighter1 = new WeakFighter();
             WeakFighter weakFighter2 = new WeakFighter();
-            WeakFighter weakFighter3 = new WeakFighter();
-            WeakFighter weakFighter4 = new WeakFighter();
+            StrongFighter strongFighter1 = new StrongFighter();
+            StrongFighter strongFighter2 = new StrongFighter();
 
+            redTeam.AddFighter(strongFighter2);
             redTeam.AddFighter(weakFighter1);
-            redTeam.AddFighter(weakFighter2);
 
-            blueTeam.AddFighter(weakFighter3);
-            blueTeam.AddFighter(weakFighter4);
+            blueTeam.AddFighter(weakFighter2);
+            blueTeam.AddFighter(strongFighter1);
         }
 
-        public void Fight()
+        private Team CheckWinnerTeam()
+        {
+            if (redTeam == null)
+            {
+                return blueTeam;
+            }
+            return redTeam;
+        }
+
+        public void Battle()
         {
             while (redTeam.HasFighters() && blueTeam.HasFighters())
             {
-                IUnit redFighter = redTeam.GetCurrentFighter();
-                IUnit blueFighter = blueTeam.GetCurrentFighter();
+                IUnit redFighter = redTeam.GetNextFighter();
+                IUnit blueFighter = blueTeam.GetNextFighter();
 
                 Console.WriteLine($"\n{redFighter.Name} (Health: {redFighter.Health}) vs {blueFighter.Name} (Health: {blueFighter.Health})");
 
@@ -53,13 +62,14 @@ namespace QueueFightGame
 
                 if (!blueTeam.HasFighters()) break;
 
-                blueFighter = blueTeam.GetCurrentFighter();
+                blueFighter = blueTeam.GetNextFighter();
                 blueFighter.Attack(redFighter);
                 if (redFighter.Health <= 0)
                 {
                     Console.WriteLine($"{redFighter.Name} погиб!");
                     redTeam.RemoveFighter();
                 }
+                Console.ReadKey();
             }
         }
 

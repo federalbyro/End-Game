@@ -29,9 +29,9 @@ namespace QueueFightGame
             return QueueFighters.Count > 0;
         }
 
-        public IUnit GetCurrentFighter()
+        public IUnit GetNextFighter()
         {
-            if (QueueFighters.Count == 0)
+            if (!HasFighters())
             {
                 Console.WriteLine($"Команда {TeamName} больше не имеет бойцов!");
                 return null;
@@ -41,7 +41,7 @@ namespace QueueFightGame
 
         public void RemoveFighter()
         {
-            if (QueueFighters.Count > 0)
+            if (HasFighters())
             {
                 IUnit removedFighter = QueueFighters.Dequeue();
                 Console.WriteLine($"{removedFighter.Name} покинул команду {TeamName}.");
