@@ -37,41 +37,51 @@ namespace QueueFightGame
 
         private Team CheckWinnerTeam()
         {
-            if (redTeam == null)
+            if (redTeam.HasFighters())
             {
                 return blueTeam;
             }
             return redTeam;
         }
 
+        private Team RandomStartAttack()
+        {
+            Random randomStartAttack = new Random();
+            bool redTeamStarts = randomStartAttack.Next(2) == 0;
+            if (redTeamStarts)
+            {
+                return redTeam;
+            }
+            return blueTeam;
+        }
+
         public void Battle()
         {
+            Team attackingTeam = RandomStartAttack();
+            Team defendingTeam = (attackingTeam == redTeam) ? blueTeam : redTeam;
+
             while (redTeam.HasFighters() && blueTeam.HasFighters())
             {
-                IUnit redFighter = redTeam.GetNextFighter();
-                IUnit blueFighter = blueTeam.GetNextFighter();
+                IUnit attacker = attackingTeam.GetNextFighter();
+                IUnit defender = defendingTeam.GetNextFighter();
 
-                Console.WriteLine($"\n{redFighter.Name} (Health: {redFighter.Health}) vs {blueFighter.Name} (Health: {blueFighter.Health})");
+                Console.WriteLine($"\n{attacker.Name} атакует {defender.Name}!");
+                attacker.Attack(defender);
 
-                redFighter.Attack(blueFighter);
-                if (blueFighter.Health <= 0)
+                // Проверяем, выжил ли защитник
+                if (defender.Health <= 0)
                 {
-                    Console.WriteLine($"{blueFighter.Name} погиб!");
-                    blueTeam.RemoveFighter();
+                    Console.WriteLine($"{defender.Name} пал в бою!");
+                    defendingTeam.RemoveFighter();
                 }
 
-                if (!blueTeam.HasFighters()) break;
-
-                blueFighter = blueTeam.GetNextFighter();
-                blueFighter.Attack(redFighter);
-                if (redFighter.Health <= 0)
-                {
-                    Console.WriteLine($"{redFighter.Name} погиб!");
-                    redTeam.RemoveFighter();
-                }
-                Console.ReadKey();
+                // Меняем атакующую команду
+                (attackingTeam, defendingTeam) = (defendingTeam, attackingTeam);
             }
+
+            Console.WriteLine(redTeam.HasFighters() ? "Красная команда победила!" : "Синяя команда победила!");
         }
+
 
 
     }
