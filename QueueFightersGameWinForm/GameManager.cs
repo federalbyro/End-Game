@@ -27,21 +27,16 @@ namespace QueueFightGame
             WeakFighter weakFighter2 = new WeakFighter();
             StrongFighter strongFighter1 = new StrongFighter();
             StrongFighter strongFighter2 = new StrongFighter();
+            Archer archer1 = new Archer();
+            Archer archer2 = new Archer();
 
             redTeam.AddFighter(strongFighter2);
             redTeam.AddFighter(weakFighter1);
+            redTeam.AddFighter(archer1);
 
             blueTeam.AddFighter(weakFighter2);
             blueTeam.AddFighter(strongFighter1);
-        }
-
-        private Team CheckWinnerTeam()
-        {
-            if (redTeam.HasFighters())
-            {
-                return blueTeam;
-            }
-            return redTeam;
+            blueTeam.AddFighter(archer2);
         }
 
         private Team RandomStartAttack()
@@ -62,20 +57,24 @@ namespace QueueFightGame
 
             while (redTeam.HasFighters() && blueTeam.HasFighters())
             {
+                Console.WriteLine("Нажмите любую клавишу, чтобы продолжить...");
+                Console.ReadKey();
+
+                Console.WriteLine("\n--- Новый раунд ---");
+                Console.WriteLine($"Ходит команда: {(attackingTeam == redTeam ? "Красная" : "Синяя")}");
+
                 IUnit attacker = attackingTeam.GetNextFighter();
                 IUnit defender = defendingTeam.GetNextFighter();
 
-                Console.WriteLine($"\n{attacker.Name} атакует {defender.Name}!");
+                Console.WriteLine($"\n{attacker.Name} | HP: {attacker.Health} атакует {defender.Name}| HP: {defender.Health}");
                 attacker.Attack(defender);
 
-                // Проверяем, выжил ли защитник
                 if (defender.Health <= 0)
                 {
                     Console.WriteLine($"{defender.Name} пал в бою!");
                     defendingTeam.RemoveFighter();
                 }
 
-                // Меняем атакующую команду
                 (attackingTeam, defendingTeam) = (defendingTeam, attackingTeam);
             }
 

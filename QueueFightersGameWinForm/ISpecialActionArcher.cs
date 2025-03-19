@@ -11,6 +11,6 @@ namespace QueueFightGame
         int Range { get; }
         int Power { get; }
 
-        void DoSpecialAttack(IUnit targer);
+        void DoSpecialAttack(Team ownTeam, Team enemyTeam);
     }
 }

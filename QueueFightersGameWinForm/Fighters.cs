@@ -8,12 +8,12 @@ namespace QueueFightGame
 {
     internal class WeakFighter : BaseUnit, ICanBeHealed
     {
-        public WeakFighter() : base("WeakFighter", 100f, 0.8f, 25) { }
+        public WeakFighter() : base("WeakFighter", 100f, 0.7f, 25) { }
     }
 
     internal class StrongFighter : BaseUnit
     {
-        public StrongFighter() : base("StrongFighter", 150f, 0.5f, 50) { }
+        public StrongFighter() : base("StrongFighter", 150f, 0.5f, 40) { }
     }
 
     internal class Healer : BaseUnit, ISpecialActionHealer
@@ -36,14 +36,30 @@ namespace QueueFightGame
     {
         public int Range { get; set; }
         public int Power { get; set; }
-        public Archer() : base("Archer", 20f, 0.9f, 15)
+        public Archer() : base("Archer", 20f, 0.8f, 15)
         {
             Range = 3;
             Power = 3;
         }
-        public void DoSpecialAttack(IUnit target)
+        public void DoSpecialAttack(Team ownTeam, Team enemyTeam)
         {
-            Console.WriteLine($"Archer attaks {target.Name}");
+            int archerIndex = ownTeam.Fighters.FindIndex(unit => unit == this);
+
+            int blockersCount = archerIndex;
+            if (blockersCount >= Range)
+            {
+                Console.WriteLine($"{Name} не может стрелять, его обзор закрыт!");
+                return;
+            }
+
+            IUnit target = enemyTeam.GetNextFighter();
+            float newDamage = Damage * target.Protection;
+
+            if (target != null)
+            {
+                Console.WriteLine($"{Name} стреляет в {target.Name}, нанося {Power} урона!");
+                target.Health -= newDamage;
+            }
         }
     }
 }
