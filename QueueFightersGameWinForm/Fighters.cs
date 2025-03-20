@@ -13,7 +13,7 @@ namespace QueueFightGame
 
     internal class StrongFighter : BaseUnit
     {
-        public StrongFighter() : base("StrongFighter", 150f, 0.5f, 40) { }
+        public StrongFighter() : base("StrongFighter", 140f, 0.5f, 40) { }
     }
 
     internal class Healer : BaseUnit, ISpecialActionHealer
@@ -36,30 +36,35 @@ namespace QueueFightGame
     {
         public int Range { get; set; }
         public int Power { get; set; }
-        public Archer() : base("Archer", 20f, 0.8f, 15)
+        public Archer(string name) : base(name, 20f, 0.8f, 5)
         {
             Range = 3;
-            Power = 3;
+            Power = 15;
         }
-        public void DoSpecialAttack(Team ownTeam, Team enemyTeam)
+        public void DoSpecialAttack(IUnit target, Team ownTeam)
         {
-            int archerIndex = ownTeam.Fighters.FindIndex(unit => unit == this);
+            int archerIndex = ownTeam.QueueFighters.ToList().FindIndex(unit => unit == this);
 
-            int blockersCount = archerIndex;
-            if (blockersCount >= Range)
+            if (archerIndex >= Range)
             {
                 Console.WriteLine($"{Name} не может стрелять, его обзор закрыт!");
                 return;
             }
 
-            IUnit target = enemyTeam.GetNextFighter();
-            float newDamage = Damage * target.Protection;
+            Random random = new Random();
+            bool isHit = random.Next(100) < 70;
 
-            if (target != null)
+            if (isHit)
             {
-                Console.WriteLine($"{Name} стреляет в {target.Name}, нанося {Power} урона!");
+                float newDamage = Power * target.Protection;
+                Console.WriteLine($"{Name} стреляет в {target.Name} и попадает, нанося {newDamage} урона!");
                 target.Health -= newDamage;
             }
+            else
+            {
+                Console.WriteLine($"{Name} стреляет в {target.Name}, но промахивается!");
+            }
         }
+
     }
 }

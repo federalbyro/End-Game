@@ -27,8 +27,8 @@ namespace QueueFightGame
             WeakFighter weakFighter2 = new WeakFighter();
             StrongFighter strongFighter1 = new StrongFighter();
             StrongFighter strongFighter2 = new StrongFighter();
-            Archer archer1 = new Archer();
-            Archer archer2 = new Archer();
+            Archer archer1 = new Archer("RedArcher");
+            Archer archer2 = new Archer("BlueArcher");
 
             redTeam.AddFighter(strongFighter2);
             redTeam.AddFighter(weakFighter1);
@@ -68,6 +68,14 @@ namespace QueueFightGame
 
                 Console.WriteLine($"\n{attacker.Name} | HP: {attacker.Health} атакует {defender.Name}| HP: {defender.Health}");
                 attacker.Attack(defender);
+
+                foreach (IUnit unit in attackingTeam.QueueFighters)
+                {
+                    if (unit is Archer archer)
+                    {
+                        archer.DoSpecialAttack(defender, attacker.Team);
+                    }
+                }
 
                 if (defender.Health <= 0)
                 {

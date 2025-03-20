@@ -25,11 +25,12 @@ namespace QueueFightGame
 
         public void Attack(IUnit target)
         {
-            Console.WriteLine($"Attack to {target.Name}");
 
             float newDamage = Damage * target.Protection;
 
             target.Health -= newDamage;
+
+            Console.WriteLine($"Наносит урон {newDamage} {target.Name}");
         }
     }
 }
