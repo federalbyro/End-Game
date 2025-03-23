@@ -23,7 +23,7 @@ namespace QueueFightGame
         public Healer(string name) : base(name, 100f, 1f, 5)
         {
             Range = 3;
-            Power = 5;
+            Power = 15;
         }
 
         public void DoHeal(Team ownTeam)
@@ -34,12 +34,15 @@ namespace QueueFightGame
                 .Where(unit => unit is ICanBeHealed && unit.Health < 100)
                 .FirstOrDefault(unit => Math.Abs(ownTeam.QueueFighters.ToList().IndexOf(unit) - healerIndex) <= Range);
 
+            Random random = new Random();
+            int amountHealth = random.Next(0, Power + 1);
+
             if (target != null)
             {
-                target.Health += Power;
+                target.Health += amountHealth;
                 if (target.Health > 100) target.Health = 100;
 
-                Console.WriteLine($"{Name} лечит {((IUnit)target).Name}, восстанавливая {Power} HP!");
+                Console.WriteLine($"{Name} лечит {((IUnit)target).Name}, восстанавливая {amountHealth} HP!");
             }
             else
             {

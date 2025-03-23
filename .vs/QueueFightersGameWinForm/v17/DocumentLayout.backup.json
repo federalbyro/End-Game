@@ -3,7 +3,15 @@
   "WorkspaceRootPath": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\queuefightersgamewinform\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\queuefightersgamewinform\\fighters.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|solutionrelative:queuefightersgamewinform\\fighters.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\queuefightersgamewinform\\team.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|solutionrelative:queuefightersgamewinform\\team.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|c:\\users\\home\\source\\repos\\queuefightersgamewinform\\queuefightersgamewinform\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|solutionrelative:queuefightersgamewinform\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -15,11 +23,7 @@
       "RelativeMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|solutionrelative:queuefightersgamewinform\\ispecialactionhealer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\queuefightersgamewinform\\fighters.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|solutionrelative:queuefightersgamewinform\\fighters.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|c:\\users\\home\\source\\repos\\queuefightersgamewinform\\queuefightersgamewinform\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\queuefightersgamewinform\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|solutionrelative:queuefightersgamewinform\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -29,10 +33,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\queuefightersgamewinform\\iunit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|solutionrelative:queuefightersgamewinform\\iunit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\queuefightersgamewinform\\team.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|solutionrelative:queuefightersgamewinform\\team.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{30B747D7-798B-4FE5-971F-6AA7890A585E}|QueueFightersGameWinForm\\QueueFightersGameWinForm.csproj|C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\queuefightersgamewinform\\game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -54,11 +54,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 284,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "IUnit.cs",
               "DocumentMoniker": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightersGameWinForm\\IUnit.cs",
               "RelativeDocumentMoniker": "QueueFightersGameWinForm\\IUnit.cs",
@@ -70,7 +70,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "ISpecialActionHealer.cs",
               "DocumentMoniker": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightersGameWinForm\\ISpecialActionHealer.cs",
               "RelativeDocumentMoniker": "QueueFightersGameWinForm\\ISpecialActionHealer.cs",
@@ -78,8 +78,7 @@
               "RelativeToolTip": "QueueFightersGameWinForm\\ISpecialActionHealer.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-16T08:31:26.546Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-16T08:31:26.546Z"
             },
             {
               "$type": "Document",
@@ -95,7 +94,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "ICanBeHealed.cs",
               "DocumentMoniker": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightersGameWinForm\\ICanBeHealed.cs",
               "RelativeDocumentMoniker": "QueueFightersGameWinForm\\ICanBeHealed.cs",
@@ -103,12 +102,11 @@
               "RelativeToolTip": "QueueFightersGameWinForm\\ICanBeHealed.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-16T08:31:55.686Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-16T08:31:55.686Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "BaseUnit.cs",
               "DocumentMoniker": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightersGameWinForm\\BaseUnit.cs",
               "RelativeDocumentMoniker": "QueueFightersGameWinForm\\BaseUnit.cs",
@@ -120,20 +118,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "Fighters.cs",
               "DocumentMoniker": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightersGameWinForm\\Fighters.cs",
               "RelativeDocumentMoniker": "QueueFightersGameWinForm\\Fighters.cs",
               "ToolTip": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightersGameWinForm\\Fighters.cs",
               "RelativeToolTip": "QueueFightersGameWinForm\\Fighters.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAowCIAAAB3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-16T08:35:43.67Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 1,
               "Title": "Team.cs",
               "DocumentMoniker": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightersGameWinForm\\Team.cs",
               "RelativeDocumentMoniker": "QueueFightersGameWinForm\\Team.cs",
@@ -141,17 +139,18 @@
               "RelativeToolTip": "QueueFightersGameWinForm\\Team.cs",
               "ViewState": "AgIAAA4AAAAAAAAAAAAgwDQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-16T08:36:06.592Z"
+              "WhenOpened": "2025-03-16T08:36:06.592Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "GameManager.cs",
               "DocumentMoniker": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightersGameWinForm\\GameManager.cs",
               "RelativeDocumentMoniker": "QueueFightersGameWinForm\\GameManager.cs",
               "ToolTip": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightersGameWinForm\\GameManager.cs",
               "RelativeToolTip": "QueueFightersGameWinForm\\GameManager.cs",
-              "ViewState": "AgIAADgAAAAAAAAAAAA1wGcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADQAAAAAAAAAAAAAAGcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-16T08:36:38.543Z",
               "EditorCaption": ""
@@ -170,7 +169,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightersGameWinForm\\Program.cs",
               "RelativeDocumentMoniker": "QueueFightersGameWinForm\\Program.cs",
@@ -178,8 +177,7 @@
               "RelativeToolTip": "QueueFightersGameWinForm\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-16T08:29:13.508Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-16T08:29:13.508Z"
             },
             {
               "$type": "Document",
