@@ -27,16 +27,20 @@ namespace QueueFightGame
             WeakFighter weakFighter2 = new WeakFighter();
             StrongFighter strongFighter1 = new StrongFighter();
             StrongFighter strongFighter2 = new StrongFighter();
-            Archer archer1 = new Archer("RedArcher");
-            Archer archer2 = new Archer("BlueArcher");
+            Archer archer1 = new Archer("Red_Archer");
+            Archer archer2 = new Archer("Blue_Archer");
+            Healer healer1 = new Healer("Red_Healer");
+            Healer healer2 = new Healer("Blue_Healer");
 
             redTeam.AddFighter(strongFighter2);
             redTeam.AddFighter(weakFighter1);
             redTeam.AddFighter(archer1);
+            redTeam.AddFighter(healer1);
 
             blueTeam.AddFighter(weakFighter2);
             blueTeam.AddFighter(strongFighter1);
             blueTeam.AddFighter(archer2);
+            blueTeam.AddFighter(healer2);
         }
 
         private Team RandomStartAttack()
@@ -69,11 +73,15 @@ namespace QueueFightGame
                 Console.WriteLine($"\n{attacker.Name} | HP: {attacker.Health} атакует {defender.Name}| HP: {defender.Health}");
                 attacker.Attack(defender);
 
-                foreach (IUnit unit in attackingTeam.QueueFighters)
+                foreach (IUnit unit in attackingTeam.QueueFighters.Skip(1))
                 {
                     if (unit is Archer archer)
                     {
                         archer.DoSpecialAttack(defender, attacker.Team);
+                    }
+                    if (unit is Healer healer)
+                    {
+                        healer.DoHeal(attacker.Team);
                     }
                 }
 

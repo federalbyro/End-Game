@@ -11,6 +11,6 @@ namespace QueueFightGame
         int Range { get; }
         int Power { get; }
 
-        void DoHeal(ICanBeHealed target);
+        void DoHeal(Team ownTeam);
     }
 }

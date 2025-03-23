@@ -8,27 +8,43 @@ namespace QueueFightGame
 {
     internal class WeakFighter : BaseUnit, ICanBeHealed
     {
-        public WeakFighter() : base("WeakFighter", 100f, 0.7f, 25) { }
+        public WeakFighter() : base("WeakFighter", 100f, 0.7f, 40) { }
     }
 
     internal class StrongFighter : BaseUnit
     {
-        public StrongFighter() : base("StrongFighter", 140f, 0.5f, 40) { }
+        public StrongFighter() : base("StrongFighter", 100f, 0.5f, 60) { }
     }
 
     internal class Healer : BaseUnit, ISpecialActionHealer
     {
         public int Range { get; private set; }
         public int Power { get; private set; }
-        public Healer() : base("Healer", 30f, 0.9f, 5)
+        public Healer(string name) : base(name, 100f, 1f, 5)
         {
             Range = 3;
             Power = 5;
         }
 
-        public void DoHeal(ICanBeHealed target)
+        public void DoHeal(Team ownTeam)
         {
-            Console.WriteLine($"Healer doheal {target.Name}");
+            int healerIndex = ownTeam.QueueFighters.ToList().FindIndex(unit => unit == this);
+
+            ICanBeHealed target = (ICanBeHealed)ownTeam.QueueFighters.ToList()
+                .Where(unit => unit is ICanBeHealed && unit.Health < 100)
+                .FirstOrDefault(unit => Math.Abs(ownTeam.QueueFighters.ToList().IndexOf(unit) - healerIndex) <= Range);
+
+            if (target != null)
+            {
+                target.Health += Power;
+                if (target.Health > 100) target.Health = 100;
+
+                Console.WriteLine($"{Name} лечит {((IUnit)target).Name}, восстанавливая {Power} HP!");
+            }
+            else
+            {
+                Console.WriteLine($"{Name} не нашел раненых союзников в радиусе {Range}.");
+            }
         }
     }
 
@@ -36,7 +52,7 @@ namespace QueueFightGame
     {
         public int Range { get; set; }
         public int Power { get; set; }
-        public Archer(string name) : base(name, 20f, 0.8f, 5)
+        public Archer(string name) : base(name, 100f, 0.9f, 5)
         {
             Range = 3;
             Power = 15;

@@ -9,5 +9,6 @@ namespace QueueFightGame
     internal interface ICanBeHealed
     {
         string Name { get; }
+        float Health { get; set; }
     }
 }
