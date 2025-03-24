@@ -8,19 +8,19 @@ namespace QueueFightGame
 {
     internal class WeakFighter : BaseUnit, ICanBeHealed
     {
-        public WeakFighter() : base("WeakFighter", 100f, 0.7f, 40) { }
+        public WeakFighter() : base("WeakFighter", 100f, 0.7f, 40, 10) { }
     }
 
     internal class StrongFighter : BaseUnit
     {
-        public StrongFighter() : base("StrongFighter", 100f, 0.5f, 60) { }
+        public StrongFighter() : base("StrongFighter", 100f, 0.5f, 60, 25) { }
     }
 
     internal class Healer : BaseUnit, ISpecialActionHealer
     {
         public int Range { get; private set; }
         public int Power { get; private set; }
-        public Healer(string name) : base(name, 100f, 1f, 5)
+        public Healer(string name) : base(name, 100f, 1f, 5, 10)
         {
             Range = 3;
             Power = 15;
@@ -55,7 +55,7 @@ namespace QueueFightGame
     {
         public int Range { get; set; }
         public int Power { get; set; }
-        public Archer(string name) : base(name, 100f, 0.9f, 5)
+        public Archer(string name) : base(name, 100f, 0.9f, 5, 10)
         {
             Range = 3;
             Power = 15;

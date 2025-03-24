@@ -10,16 +10,19 @@ namespace QueueFightGame
     {
         public Queue<IUnit> QueueFighters { get; private set; }
         public string TeamName { get; private set; }
+        public float Money { get; private set; }
 
-        public Team(string teamName)
+        public Team(string teamName, float money)
         {
             TeamName = teamName;
             QueueFighters = new Queue<IUnit>();
+            Money = money;
         }
 
         public void AddFighter(IUnit fighter)
         {
             fighter.Team = this;
+            this.Money -= fighter.Cost;
             QueueFighters.Enqueue(fighter);
             Console.WriteLine($"Add {fighter.Name} to {this.TeamName}");
         }

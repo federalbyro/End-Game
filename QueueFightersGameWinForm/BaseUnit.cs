@@ -12,14 +12,16 @@ namespace QueueFightGame
         public float Health { get; set; }
         public float Protection { get; private set; }
         public float Damage { get; private set; }
+        public float Cost { get; private set; }
         public Team Team { get; set; }
 
-        public BaseUnit(string name, float health, float protection, float damage)
+        public BaseUnit(string name, float health, float protection, float damage, float cost)
         {
             Name = name;
             Health = health;
             Protection = protection;
             Damage = damage;
+            Cost = cost;
             Team = null;
         }
 

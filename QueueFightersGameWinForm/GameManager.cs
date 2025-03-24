@@ -14,8 +14,8 @@ namespace QueueFightGame
 
         public GameManager()
         {
-            redTeam = new Team("Red");
-            blueTeam = new Team("Blue");
+            redTeam = new Team("Red", 100);
+            blueTeam = new Team("Blue", 100);
 
             CreatFighters();
             Battle();
@@ -41,6 +41,9 @@ namespace QueueFightGame
             blueTeam.AddFighter(strongFighter1);
             blueTeam.AddFighter(archer2);
             blueTeam.AddFighter(healer2);
+
+            Console.WriteLine($"Money RedTeam {redTeam.Money}");
+            Console.WriteLine($"Money BlueTeam {blueTeam.Money}");
         }
 
         private Team RandomStartAttack()
