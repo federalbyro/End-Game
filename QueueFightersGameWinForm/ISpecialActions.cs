@@ -6,18 +6,26 @@ using System.Threading.Tasks;
 
 namespace QueueFightGame
 {
-    public interface ISpecialActionArcher
-    {
-        int Range { get; }
-        int Power { get; }
-        void DoSpecialAttack(IUnit target, Team ownTeam);
-    }
-
-    internal interface ISpecialActionHealer
+    public interface ISpecialActionHealer
     {
         int Range { get; }
         int Power { get; }
 
         void DoHeal(Team ownTeam);
+    }
+
+    public interface ISpecialActionArcher
+    {
+        int Range { get; }
+        int Power { get; }
+
+        void DoSpecialAttack(IUnit target, Team ownTeam);
+    }
+
+    public interface ISpecialActionMage
+    {
+        int CloneRange { get; }
+
+        void DoClone(Team ownTeam);
     }
 }

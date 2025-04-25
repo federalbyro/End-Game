@@ -79,8 +79,10 @@ namespace QueueFightGame
 
     public class Mage : BaseUnit, ICanBeHealed
     {
+        public Mage() : base("Mage", 100f, 0.8f, 20, 25) { }
         public Mage(string name) : base(name, 100f, 0.8f, 20, 25) { }
 
+        // Rest of the class remains the same
         public void Attack(IUnit target)
         {
             float magicDamage = Damage * 0.7f; // 70% урона проходит сквозь защиту

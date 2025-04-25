@@ -62,8 +62,9 @@
     <Compile Include="GameModeForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ICanBe.cs" />
-    <Compile Include="ISpecialActions.cs" />
+    <Compile Include="ICanBeHealed.cs" />
+    <Compile Include="ISpecialActionArcher.cs" />
+    <Compile Include="ISpecialActionHealer.cs" />
     <Compile Include="IUnit.cs" />
     <Compile Include="MainMenuForm.cs">
       <SubType>Form</SubType>
