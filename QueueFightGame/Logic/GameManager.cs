@@ -169,6 +169,9 @@ namespace QueueFightGame
 
             CurrentState = GameState.TurnInProgress; // Lock state during processing
 
+            // Update the command manager with current round number
+            _commandManager.SetCurrentRound(Round);
+
             Log($"\n--- Раунд {Round} ---");
             Log($"Ходит команда: {CurrentAttacker.TeamName}");
 
@@ -243,6 +246,26 @@ namespace QueueFightGame
 
         private void CheckForDeaths()
         {
+            // Save references to dead fighters before removing them
+            var deadRedFighters = RedTeam.Fighters.Where(f => f.Health <= 0).ToList();
+            var deadBlueFighters = BlueTeam.Fighters.Where(f => f.Health <= 0).ToList();
+            
+            // Record dead fighters with their positions for possible resurrection during undo
+            foreach (var fighter in deadRedFighters)
+            {
+                int position = RedTeam.Fighters.IndexOf(fighter);
+                _commandManager.RecordDeadFighter(fighter, RedTeam, position);
+                Log($"Боец {fighter.Name} из команды {RedTeam.TeamName} погибает!");
+            }
+            
+            foreach (var fighter in deadBlueFighters)
+            {
+                int position = BlueTeam.Fighters.IndexOf(fighter);
+                _commandManager.RecordDeadFighter(fighter, BlueTeam, position);
+                Log($"Боец {fighter.Name} из команды {BlueTeam.TeamName} погибает!");
+            }
+            
+            // Now remove them from teams
             RedTeam.RemoveDeadFighters(_logger);
             BlueTeam.RemoveDeadFighters(_logger);
         }
@@ -276,6 +299,80 @@ namespace QueueFightGame
             return false;
         }
 
+        // New method to allow undoing to a specific round
+        public void RequestUndoToRound(int targetRound)
+        {
+            if (CurrentState == GameState.GameOver)
+            {
+                Log("Нельзя отменить ход: игра завершена.");
+                return;
+            }
+            if (CurrentState == GameState.TurnInProgress)
+            {
+                Log("Нельзя отменить ход во время его обработки.");
+                return;
+            }
+            
+            if (targetRound >= Round)
+            {
+                Log($"Невозможно отменить до раунда {targetRound} - текущий раунд: {Round}.");
+                return;
+            }
+
+            if (_commandManager.CanUndoToRound(targetRound))
+            {
+                int originalRound = Round;
+                
+                // Get all fighters that died in rounds after the target round
+                var deadFighters = _commandManager.GetDeadFightersInRange(targetRound, Round);
+                
+                // Undo to the target round
+                int actionsUndone = _commandManager.UndoToRound(targetRound);
+                
+                if (actionsUndone > 0)
+                {
+                    // Set the round to the target round
+                    Round = targetRound;
+                    
+                    // Swap attacker/defender based on round parity
+                    bool shouldSwapFromCurrent = (originalRound - targetRound) % 2 == 1;
+                    if (shouldSwapFromCurrent)
+                    {
+                        (CurrentAttacker, CurrentDefender) = (CurrentDefender, CurrentAttacker);
+                    }
+                    
+                    // Restore dead fighters to their teams
+                    foreach (var deadFighter in deadFighters)
+                    {
+                        // Restore some health to the fighter
+                        deadFighter.Unit.Health = Math.Max(1, deadFighter.Unit.MaxHealth * 0.1f);
+                        
+                        // Add the fighter back to its team at the correct position
+                        deadFighter.Team.AddFighterAt(
+                            Math.Min(deadFighter.Position, deadFighter.Team.Fighters.Count), 
+                            deadFighter.Unit);
+                        
+                        Log($"Боец {deadFighter.Unit.Name} воскрешен и возвращен в команду {deadFighter.Team.TeamName}.");
+                    }
+                    
+                    // Clear records for all undone rounds
+                    for (int r = targetRound + 1; r <= originalRound; r++)
+                    {
+                        _commandManager.ClearDeadFightersForRound(r);
+                    }
+                    
+                    Log($"Игра отменена до раунда {targetRound}.");
+                }
+                
+                CurrentState = GameState.WaitingForPlayer; // Allow next action
+                OnGameStateChanged(); // Notify UI to refresh display
+            }
+            else
+            {
+                Log($"Нельзя отменить до раунда {targetRound}.");
+            }
+        }
+
         public void RequestUndoTurn()
         {
             if (CurrentState == GameState.GameOver)
@@ -291,18 +388,46 @@ namespace QueueFightGame
 
             if (_commandManager.CanUndo)
             {
-                // Before undoing, switch back the CurrentAttacker/Defender if the last action completed a turn cycle
-                // This logic depends on when Undo is allowed. If allowed mid-turn, it's complex.
-                // Assume Undo reverts the *last completed action* (attack or special ability).
-                _commandManager.Undo();
-
-                // After undo, the game state might be complex. We need to signal UI to refresh.
-                // Re-evaluating attacker/defender and round might be needed if a full turn was undone.
-                // For simplicity, let Undo just revert the last command(s) and trigger UI refresh.
-                // The state might become slightly inconsistent until next turn request corrects it.
+                // Store the current round we're undoing before we change it
+                int targetRound = Round - 1;
+                
+                // First, get all dead fighters from the previous round that need to be resurrected
+                var deadFighters = _commandManager.GetDeadFightersFromRound(targetRound);
+                
+                // Then undo all commands from the last round
+                int actionsUndone = _commandManager.UndoLastRound(Round);
+                
+                // After that, we need to adjust the game state appropriately
+                if (actionsUndone > 0)
+                {
+                    // Adjust round counter - only go back one round
+                    if (Round > 1)
+                    {
+                        Round--;
+                    }
+                    
+                    // Swap attacker and defender
+                    (CurrentAttacker, CurrentDefender) = (CurrentDefender, CurrentAttacker);
+                    
+                    // Restore dead fighters to their teams
+                    foreach (var deadFighter in deadFighters)
+                    {
+                        // Restore some health to the fighter
+                        deadFighter.Unit.Health = Math.Max(1, deadFighter.Unit.MaxHealth * 0.1f);
+                        
+                        // Add the fighter back to its team
+                        int insertPosition = Math.Min(deadFighter.Position, deadFighter.Team.Fighters.Count);
+                        deadFighter.Team.AddFighterAt(insertPosition, deadFighter.Unit);
+                        
+                        Log($"Боец {deadFighter.Unit.Name} воскрешен и возвращен в команду {deadFighter.Team.TeamName}.");
+                    }
+                    
+                    // Clear the dead fighter records for this round
+                    _commandManager.ClearDeadFightersForRound(targetRound);
+                }
+                
                 CurrentState = GameState.WaitingForPlayer; // Allow next action
-                CheckForDeaths(); // Ensure no revived units are immediately removed
-                Log("Последнее действие отменено.");
+                Log("Раунд полностью отменен.");
                 OnGameStateChanged(); // Notify UI to refresh display
             }
             else

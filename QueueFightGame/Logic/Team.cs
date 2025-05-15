@@ -84,7 +84,13 @@ namespace QueueFightGame
         // Used by AttackCommand Undo
         public void AddFighterAt(int index, IUnit fighter)
         {
-            if (index < 0 || index > Fighters.Count) index = Fighters.Count; // Append if index is bad
+            if (fighter == null)
+                throw new ArgumentNullException(nameof(fighter));
+                
+            // Check if index is valid, if not, append to end
+            if (index < 0 || index > Fighters.Count)
+                index = Fighters.Count;
+                
             fighter.Team = this;
             Fighters.Insert(index, fighter);
         }
