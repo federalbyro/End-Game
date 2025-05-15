@@ -33,7 +33,7 @@ namespace QueueFightGame
                 // Ensure position is valid
                 int actualPosition = Math.Max(0, Math.Min(_insertPosition, _team.Fighters.Count));
                 _team.AddFighterAt(actualPosition, _createdClone); // Use AddFighterAt
-                _logger.Log($"{_mage.Name} ({_team.TeamName}) успешно клонировал {_original.Name}, создав {_createdClone.Name}!");
+                _logger.Log($"{_mage.Name}|({_mage.ID}) ({_team.TeamName}) успешно клонировал {_original.Name}, создав {_createdClone.Name}!");
             }
             else
             {

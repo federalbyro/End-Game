@@ -40,7 +40,7 @@ namespace QueueFightGame
                 // Calculate damage based on archer power and target protection
                 _damageDealt = Math.Max(1, _power * (1.0f - _target.Protection));
                 _target.Health -= _damageDealt;
-                _logger.Log($"{_archer.Name} ({_archer.Team.TeamName}) стреляет в {_target.Name} ({_targetTeam.TeamName}) и ПОПАДАЕТ, нанося {_damageDealt:F1} урона. Осталось здоровья: {_target.Health:F1}/{_target.MaxHealth:F1}");
+                _logger.Log($"{_archer.Name}|({_archer.ID}) ({_archer.Team.TeamName}) стреляет в {_target.Name} ({_targetTeam.TeamName}) и ПОПАДАЕТ, нанося {_damageDealt:F1} урона. Осталось здоровья: {_target.Health:F1}/{_target.MaxHealth:F1}");
 
                 // Check for target death (Team handles removal later)
                 if (_target.Health <= 0)
@@ -50,7 +50,7 @@ namespace QueueFightGame
             }
             else
             {
-                _logger.Log($"{_archer.Name} ({_archer.Team.TeamName}) стреляет в {_target.Name} ({_targetTeam.TeamName}), но ПРОМАХИВАЕТСЯ!");
+                _logger.Log($"{_archer.Name}|({_archer.ID}) ({_archer.Team.TeamName}) стреляет в {_target.Name} ({_targetTeam.TeamName}), но ПРОМАХИВАЕТСЯ!");
                 _damageDealt = 0; // Ensure 0 if missed
             }
         }

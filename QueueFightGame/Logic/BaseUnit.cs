@@ -58,7 +58,7 @@ namespace QueueFightGame
             // Basic attack logic
             float damageDealt = Math.Max(1, this.Damage * (1.0f - target.Protection)); // Ensure at least 1 damage, adjust formula as needed
             target.Health -= damageDealt;
-            logger.Log($"{this.Name} ({this.Team.TeamName}) атакует {target.Name} ({target.Team.TeamName}) и наносит {damageDealt:F1} урона. Осталось здоровья у {target.Name}: {target.Health:F1}");
+            logger.Log($"{this.Name}|({this.ID}) ({this.Team.TeamName}) атакует {target.Name} ({target.Team.TeamName}) и наносит {damageDealt:F1} урона. Осталось здоровья у {target.Name}: {target.Health:F1}");
         }
 
         // Base implementation for non-special units
@@ -111,7 +111,7 @@ namespace QueueFightGame
         // Walls cannot attack
         public override void Attack(IUnit target, ILogger logger)
         {
-            logger.Log($"{this.Name} ({this.Team.TeamName}) не может атаковать.");
+            logger.Log($"{this.Name}|({this.ID}) ({this.Team.TeamName}) не может атаковать.");
         }
 
         // Walls don't have special actions by default

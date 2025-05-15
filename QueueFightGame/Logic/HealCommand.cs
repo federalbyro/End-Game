@@ -37,11 +37,11 @@ namespace QueueFightGame
             if (_actualHealAmount > 0)
             {
                 _target.Health += _actualHealAmount;
-                _logger.Log($"{_healer.Name} ({_team.TeamName}) лечит {_target.Name} на {_actualHealAmount:F1} HP. Текущее здоровье: {_target.Health:F1}/{_target.MaxHealth:F1}");
+                _logger.Log($"{_healer.Name}|({_healer.ID}) ({_team.TeamName}) лечит {_target.Name} на {_actualHealAmount:F1} HP. Текущее здоровье: {_target.Health:F1}/{_target.MaxHealth:F1}");
             }
             else
             {
-                _logger.Log($"{_healer.Name} ({_team.TeamName}) пытается лечить {_target.Name}, но не может (цель здорова или не повезло с лечением).");
+                _logger.Log($"{_healer.Name}|({_healer.ID}) ({_team.TeamName}) пытается лечить {_target.Name}, но не может (цель здорова или не повезло с лечением).");
                 _actualHealAmount = 0; // Ensure it's 0 if no heal happened
             }
         }

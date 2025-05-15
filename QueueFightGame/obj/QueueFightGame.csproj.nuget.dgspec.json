@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Пользователь\\coding\\С#\\GameVersion2\\GameVersionSecond\\QueueFightGame\\QueueFightGame.csproj": {}
+    "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightGame\\QueueFightGame.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Пользователь\\coding\\С#\\GameVersion2\\GameVersionSecond\\QueueFightGame\\QueueFightGame.csproj": {
+    "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightGame\\QueueFightGame.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Пользователь\\coding\\С#\\GameVersion2\\GameVersionSecond\\QueueFightGame\\QueueFightGame.csproj",
+        "projectUniqueName": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightGame\\QueueFightGame.csproj",
         "projectName": "QueueFightGame",
-        "projectPath": "C:\\Users\\Пользователь\\coding\\С#\\GameVersion2\\GameVersionSecond\\QueueFightGame\\QueueFightGame.csproj",
-        "packagesPath": "C:\\Users\\Пользователь\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Пользователь\\coding\\С#\\GameVersion2\\GameVersionSecond\\QueueFightGame\\obj\\",
+        "projectPath": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightGame\\QueueFightGame.csproj",
+        "packagesPath": "C:\\Users\\Home\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightGame\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "UsingMicrosoftNETSdk": false,
@@ -19,7 +19,7 @@
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Пользователь\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Home\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

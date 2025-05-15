@@ -98,7 +98,7 @@ namespace QueueFightGame
             if (_currentBuff != null && _currentBuff.BuffType != BuffType.None)
             {
                 // Maybe allow replacing buffs? For now, log and do nothing or remove old one first.
-                logger.Log($"{Name} уже имеет бафф {_currentBuff.BuffType}. Новый бафф {buff.BuffType} не применен.");
+                logger.Log($"{Name}|({ID}) уже имеет бафф {_currentBuff.BuffType}. Новый бафф {buff.BuffType} не применен.");
                 return;
             }
             _currentBuff = buff;
@@ -110,7 +110,7 @@ namespace QueueFightGame
         {
             if (_currentBuff != null && _currentBuff.BuffType != BuffType.None)
             {
-                logger.Log($"{Name} теряет бафф {_currentBuff.BuffType}.");
+                logger.Log($"{Name}|({ID}) теряет бафф {_currentBuff.BuffType}.");
                 _currentBuff?.RemoveBuffEffect(this); // Remove visual effects
                 _currentBuff = null;
                 _squire = null; // Squire link is broken when buff is removed
@@ -132,7 +132,7 @@ namespace QueueFightGame
             float damageDealt = Math.Max(1, baseDamage * (1.0f - targetProtection));
 
             target.Health -= damageDealt;
-            logger.Log($"{this.Name} ({this.Team.TeamName}){(CurrentBuffType != BuffType.None ? $" [{CurrentBuffType}]" : "")} атакует {target.Name} ({target.Team.TeamName}) и наносит {damageDealt:F1} урона. Осталось здоровья у {target.Name}: {target.Health:F1}");
+            logger.Log($"{this.Name}|({this.ID}) ({this.Team.TeamName}){(CurrentBuffType != BuffType.None ? $" [{CurrentBuffType}]" : "")} атакует {target.Name} ({target.Team.TeamName}) и наносит {damageDealt:F1} урона. Осталось здоровья у {target.Name}: {target.Health:F1}");
 
             // Remove one-time buffs after attack
             if (_currentBuff != null && (CurrentBuffType == BuffType.Spear || CurrentBuffType == BuffType.Horse))
@@ -181,7 +181,7 @@ namespace QueueFightGame
             }
             else
             {
-                logger.Log($"{Name} ({Team.TeamName}) пропускает лечение в этот ход.");
+                logger.Log($"{Name}|({ID}) ({Team.TeamName}) пропускает лечение в этот ход.");
             }
             HasUsedSpecial = true; // Mark as used for this turn's special phase
         }
@@ -206,7 +206,7 @@ namespace QueueFightGame
             }
             else
             {
-                logger.Log($"{Name} ({Team.TeamName}) не нашел раненых союзников в радиусе {HealRange}.");
+                logger.Log($"{Name}|({ID}) ({Team.TeamName}) не нашел раненых союзников в радиусе {HealRange}.");
             }
         }
     }

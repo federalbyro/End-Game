@@ -86,7 +86,7 @@ namespace QueueFightGame
                 else // Failsafe if index wasn't stored correctly
                     _defendingTeam.AddFighterAt(0, _defender); // Add to front as fallback
 
-                _logger.Log($"{_defender.Name} возвращен в бой (Undo).");
+                _logger.Log($"{_defender.Name}|({_defender.ID}) возвращен в бой (Undo).");
             }
 
             // If attacker died and was removed, restore similarly (if attacker death implemented)
