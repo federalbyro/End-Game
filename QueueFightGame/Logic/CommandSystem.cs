@@ -323,5 +323,52 @@ namespace QueueFightGame
 
             return commands.Count;
         }
+        
+        // Метод для возврата только последнего отменённого раунда
+        public int RedoLastRound(int currentRound)
+        {
+            // Следующий раунд после текущего
+            int nextRound = _roundHistory.Count > 0 ? _roundHistory.Max() + 1 : 1;
+            // Но если уже есть команды для nextRound, значит redo невозможен
+            if (!_commandsByRound.ContainsKey(nextRound) && _redoStack.Count > 0)
+            {
+                // Собираем команды для этого раунда из redo-стека (в обратном порядке)
+                var commandsToRedo = new List<IGameCommand>();
+                int count = 0;
+                // Считаем сколько команд было в последнем undone раунде
+                foreach (var kv in _commandsByRound)
+                {
+                    if (kv.Key == currentRound)
+                    {
+                        count = kv.Value.Count;
+                        break;
+                    }
+                }
+                // Если не нашли, пробуем по количеству в redo-стеке (fallback)
+                if (count == 0)
+                    count = _redoStack.Count;
+
+                for (int i = 0; i < count && _redoStack.Count > 0; i++)
+                {
+                    commandsToRedo.Add(_redoStack.Pop());
+                }
+                commandsToRedo.Reverse(); // Чтобы порядок был как при исполнении
+
+                foreach (var cmd in commandsToRedo)
+                {
+                    cmd.Execute();
+                    _undoStack.Push(cmd);
+                }
+
+                // Добавляем команды в _commandsByRound и _roundHistory
+                _commandsByRound[nextRound] = new List<IGameCommand>(commandsToRedo);
+                _roundHistory.Add(nextRound);
+
+                _logger.Log($"Раунд {nextRound} возвращён ({commandsToRedo.Count} действий).");
+                return commandsToRedo.Count;
+            }
+            _logger.Log("Нет отменённых раундов для возврата.");
+            return 0;
+        }
     }
 }

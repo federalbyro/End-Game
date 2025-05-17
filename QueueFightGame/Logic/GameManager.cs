@@ -408,6 +408,40 @@ namespace QueueFightGame
             }
         }
 
+        public void RequestRedoTurn()
+        {
+            if (CurrentState == GameState.GameOver)
+            {
+                Log("Нельзя вернуть ход: игра завершена.");
+                return;
+            }
+            if (CurrentState == GameState.TurnInProgress)
+            {
+                Log("Нельзя вернуть ход во время его обработки.");
+                return;
+            }
+
+            if (_commandManager.CanRedo)
+            {
+                int actionsRedone = _commandManager.RedoLastRound(Round);
+
+                if (actionsRedone > 0)
+                {
+                    Round++;
+                    // Меняем атакующую/защищающуюся команду вперёд
+                    (CurrentAttacker, CurrentDefender) = (CurrentDefender, CurrentAttacker);
+                }
+
+                CurrentState = GameState.WaitingForPlayer;
+                Log("Раунд возвращён (Redo).");
+                OnGameStateChanged();
+            }
+            else
+            {
+                Log("Нет действий для возврата.");
+            }
+        }
+
         // --- Event Invokers ---
         public virtual void OnGameStateChanged()
         {

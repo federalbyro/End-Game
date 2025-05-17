@@ -31,6 +31,7 @@ namespace QueueFightGame.UI
         private TextBox _logBox;
         private Button _nextBtn;
         private Button _undoBtn;
+        private Button _redoBtn; // Новая кнопка Redo
         private Button _exitBtn;
         private Button _toggleLogButton; // Кнопка для скрытия/показа логов
         private bool _redOnLeft;
@@ -128,6 +129,7 @@ namespace QueueFightGame.UI
 
             _nextBtn = MakeButton("Следующий ход", NextTurn);
             _undoBtn = MakeButton("Отменить ход", UndoTurn);
+            _redoBtn = MakeButton("Вернуть ход", RedoTurn); // Новая кнопка
             _exitBtn = MakeButton("Выход", (s, e) => Close());
             _toggleLogButton = MakeButton("Скрыть логи", ToggleLogs);
 
@@ -148,8 +150,8 @@ namespace QueueFightGame.UI
                         _gameManager.SaveState(dlg.FileName);
             });
             
-            // Правильное добавление кнопок в панель
-            buttonBar.Controls.AddRange(new[] { saveBtn, _nextBtn, _undoBtn, _toggleLogButton, _exitBtn });
+            // Добавляем Redo-кнопку в панель
+            buttonBar.Controls.AddRange(new[] { saveBtn, _nextBtn, _undoBtn, _redoBtn, _toggleLogButton, _exitBtn });
             _battleField.Controls.Add(buttonBar);
         }
         
@@ -244,8 +246,7 @@ namespace QueueFightGame.UI
 
             _nextBtn.Enabled = e.CurrentState == GameState.WaitingForPlayer;
             _undoBtn.Enabled = _gameManager.CommandManager.CanUndo && e.CurrentState == GameState.WaitingForPlayer;
-
-       
+            _redoBtn.Enabled = _gameManager.CommandManager.CanRedo && e.CurrentState == GameState.WaitingForPlayer; // Redo доступен только если можно и в ожидании
 
             DrawTeam(_bluePanel, e.BlueTeamSnapshot,  /*flip=*/false); // синие слева – лица вправо
             DrawTeam(_redPanel, e.RedTeamSnapshot,   /*flip=*/true);
@@ -294,6 +295,7 @@ namespace QueueFightGame.UI
         // ─────────────────── BUTTONS ───────────────────
         private void NextTurn(object s, EventArgs e) => _gameManager.RequestNextTurn();
         private void UndoTurn(object s, EventArgs e) => _gameManager.RequestUndoTurn();
+        private void RedoTurn(object s, EventArgs e) => _gameManager.RequestRedoTurn(); // Новый обработчик
 
         // ─────────────────── UTILS ───────────────────
         private static Image SafeImageLoad(string path, bool flipX = false)
