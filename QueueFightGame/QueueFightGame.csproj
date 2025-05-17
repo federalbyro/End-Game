@@ -63,14 +63,12 @@
     <Compile Include="Logic\BuffDecoratos.cs" />
     <Compile Include="Logic\CloneCommand.cs" />
     <Compile Include="Logic\CommandSystem.cs" />
-    <Compile Include="Logic\Game.cs" />
     <Compile Include="Logic\GameManager.cs" />
     <Compile Include="Logic\HealCommand.cs" />
     <Compile Include="Logic\ICanBe.cs" />
     <Compile Include="Logic\ILogger.cs" />
     <Compile Include="Logic\ISpecialAction.cs" />
     <Compile Include="Logic\IUnit.cs" />
-    <Compile Include="Logic\LoadSaveGame.cs" />
     <Compile Include="Logic\MemoryLogger.cs" />
     <Compile Include="Logic\Program.cs" />
     <Compile Include="MainMenuForm.cs">
@@ -78,7 +76,6 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logic\SquireBuffCommand.cs" />
-    <Compile Include="Logic\StrongFighterDecorator.cs" />
     <Compile Include="Logic\Team.cs" />
     <Compile Include="Logic\Fighters.cs" />
     <Compile Include="Logic\UnitConfig.cs" />

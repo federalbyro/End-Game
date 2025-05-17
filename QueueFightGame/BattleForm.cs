@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Text;
 
 namespace QueueFightGame.UI
 {
@@ -10,14 +9,11 @@ namespace QueueFightGame.UI
     {
         private const int UnitDisplaySize = 128;
         private const int UnitDisplayMargin = 8;
-
-        protected GameManager _gameManager;
+        private GameManager _gameManager;
         private readonly ILogger _battleLogger;
-
         private Panel _battleField;
         private FlowLayoutPanel _redPanel;
         private FlowLayoutPanel _bluePanel;
-
         private Label _roundLabel;
         private Label _turnLabel;
         private Label _statusLabel;
@@ -27,21 +23,17 @@ namespace QueueFightGame.UI
         private Button _redoBtn;
         private Button _exitBtn;
         private Button _toggleLogButton;
-        private bool _redOnLeft;
         private bool _logsVisible = true;
         private int _logBoxHeight = 180;
-
         private readonly ILogger _uiLogger;
+
         public BattleForm(GameManager existingManager)
         {
-            if (existingManager == null) throw new ArgumentNullException(nameof(existingManager));
-            _gameManager = existingManager;
+            _gameManager = existingManager ?? throw new ArgumentNullException(nameof(existingManager));
             _uiLogger = existingManager.Logger;
             BuildUi();
-
             _gameManager.GameStateChanged += OnGameStateChanged;
-            _gameManager.GameOver += (s, e) => { /* можно показать окно результата */ };
-
+            _gameManager.GameOver += (s, e) => { };
             _gameManager.OnGameStateChanged();
         }
 
@@ -49,23 +41,18 @@ namespace QueueFightGame.UI
         {
             _battleLogger = new MemoryLogger();
             _gameManager = new GameManager(_battleLogger);
-
             BuildUi();
-
             _gameManager.GameStateChanged += OnGameStateChanged;
             _gameManager.GameOver += (s, e) => { };
             _gameManager.StartGame(redTeam, blueTeam);
         }
 
-        // ─────────────────── UI BUILD ───────────────────
         private void BuildUi()
         {
             Text = "Поле битвы";
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
-
             ClientSize = new Size(1920, 1080);
-
             StartPosition = FormStartPosition.CenterScreen;
             AutoScaleMode = AutoScaleMode.Dpi;
             DoubleBuffered = true;
@@ -116,9 +103,11 @@ namespace QueueFightGame.UI
 
             _nextBtn = MakeButton("Следующий ход", NextTurn);
             _undoBtn = MakeButton("Отменить ход", UndoTurn);
-            _redoBtn = MakeButton("Вернуть ход", RedoTurn); // Новая кнопка
+            _redoBtn = MakeButton("Вернуть ход", RedoTurn);
             _exitBtn = MakeButton("Выход", (s, e) => Close());
             _toggleLogButton = MakeButton("Скрыть логи", ToggleLogs);
+
+            var saveBtn = MakeButton("💾 Сохранить", SaveGame);
 
             var buttonBar = new FlowLayoutPanel
             {
@@ -130,21 +119,13 @@ namespace QueueFightGame.UI
                 BackColor = Color.FromArgb(150, 0, 0, 0)
             };
 
-            var saveBtn = MakeButton("💾 Сохранить", (s, ea) =>
-            {
-                using (var dlg = new SaveFileDialog { Filter = "JSON|*.json" })
-                    if (dlg.ShowDialog() == DialogResult.OK)
-                        _gameManager.SaveState(dlg.FileName);
-            });
-            
             buttonBar.Controls.AddRange(new[] { saveBtn, _nextBtn, _undoBtn, _redoBtn, _toggleLogButton, _exitBtn });
             _battleField.Controls.Add(buttonBar);
         }
-        
+
         private void ToggleLogs(object sender, EventArgs e)
         {
             _logsVisible = !_logsVisible;
-            
             if (_logsVisible)
             {
                 _logBox.Height = _logBoxHeight;
@@ -158,7 +139,6 @@ namespace QueueFightGame.UI
                 _logBox.Visible = false;
                 _toggleLogButton.Text = "Показать логи";
             }
-            
             _battleField.PerformLayout();
         }
 
@@ -179,14 +159,17 @@ namespace QueueFightGame.UI
             return pnl;
         }
 
-        private Label MakeLabel(string text, Color? color = null) => new Label
+        private Label MakeLabel(string text, Color? color = null)
         {
-            Text = text,
-            Dock = DockStyle.Fill,
-            TextAlign = ContentAlignment.MiddleCenter,
-            Font = new Font("Segoe UI", 12f, FontStyle.Bold),
-            ForeColor = color ?? Color.White
-        };
+            return new Label
+            {
+                Text = text,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 12f, FontStyle.Bold),
+                ForeColor = color ?? Color.White
+            };
+        }
 
         private Button MakeButton(string text, EventHandler click)
         {
@@ -202,36 +185,41 @@ namespace QueueFightGame.UI
             return btn;
         }
 
-        // ─────────────────── GAME CALLBACKS ───────────────────
         private void OnGameStateChanged(object sender, GameStateChangedEventArgs e)
-            => (InvokeRequired ? (Action)(() => ApplyState(e)) : () => ApplyState(e))();
+        {
+            if (InvokeRequired)
+                Invoke(new Action(() => ApplyState(e)));
+            else
+                ApplyState(e);
+        }
 
         private void ApplyState(GameStateChangedEventArgs e)
         {
             _roundLabel.Text = $"Раунд: {_gameManager.Round}";
             _turnLabel.Text = $"Ход: {_gameManager.CurrentAttacker?.TeamName ?? "-"}";
-
             if (e.CurrentState == GameState.WaitingForPlayer)
             {
-                _statusLabel.Text = "Ваш ход"; _statusLabel.ForeColor = Color.LimeGreen;
+                _statusLabel.Text = "Ваш ход";
+                _statusLabel.ForeColor = Color.LimeGreen;
             }
             else if (e.CurrentState == GameState.TurnInProgress)
             {
-                _statusLabel.Text = "Обработка…"; _statusLabel.ForeColor = Color.Orange;
+                _statusLabel.Text = "Обработка…";
+                _statusLabel.ForeColor = Color.Orange;
             }
             else
             {
-                _statusLabel.Text = "Финал"; _statusLabel.ForeColor = Color.Red;
-                _nextBtn.Enabled = _undoBtn.Enabled = false; _exitBtn.Text = "Закрыть";
+                _statusLabel.Text = "Финал";
+                _statusLabel.ForeColor = Color.Red;
+                _nextBtn.Enabled = false;
+                _undoBtn.Enabled = false;
+                _exitBtn.Text = "Закрыть";
             }
-
             _nextBtn.Enabled = e.CurrentState == GameState.WaitingForPlayer;
             _undoBtn.Enabled = _gameManager.CommandManager.CanUndo && e.CurrentState == GameState.WaitingForPlayer;
             _redoBtn.Enabled = _gameManager.CommandManager.CanRedo && e.CurrentState == GameState.WaitingForPlayer;
-
-            DrawTeam(_bluePanel, e.BlueTeamSnapshot,  /*flip=*/false);
-            DrawTeam(_redPanel, e.RedTeamSnapshot,   /*flip=*/true);
-
+            DrawTeam(_bluePanel, e.BlueTeamSnapshot, false);
+            DrawTeam(_redPanel, e.RedTeamSnapshot, true);
             _logBox.Lines = e.LogMessages.ToArray();
             _logBox.SelectionStart = _logBox.Text.Length;
             _logBox.ScrollToCaret();
@@ -246,7 +234,6 @@ namespace QueueFightGame.UI
                 var cont = new Panel { Width = UnitDisplaySize, Height = UnitDisplaySize + 40, Margin = new Padding(UnitDisplayMargin) };
                 var pic = new PictureBox { Width = UnitDisplaySize, Height = UnitDisplaySize, SizeMode = PictureBoxSizeMode.Zoom, BorderStyle = BorderStyle.FixedSingle };
                 pic.Image = SafeImageLoad(unit.IconPath, flip);
-
                 var idTag = new Label
                 {
                     Text = $"#{unit.ID}",
@@ -258,7 +245,6 @@ namespace QueueFightGame.UI
                 };
                 pic.Controls.Add(idTag);
                 pic.Controls.SetChildIndex(idTag, 0);
-
                 var lbl = new Label
                 {
                     Dock = DockStyle.Bottom,
@@ -268,17 +254,26 @@ namespace QueueFightGame.UI
                     TextAlign = ContentAlignment.TopCenter,
                     BackColor = Color.FromArgb(180, 255, 255, 255)
                 };
-                cont.Controls.Add(pic); cont.Controls.Add(lbl); panel.Controls.Add(cont);
+                cont.Controls.Add(pic);
+                cont.Controls.Add(lbl);
+                panel.Controls.Add(cont);
             }
             panel.ResumeLayout();
         }
 
-        // ─────────────────── BUTTONS ───────────────────
         private void NextTurn(object s, EventArgs e) => _gameManager.RequestNextTurn();
         private void UndoTurn(object s, EventArgs e) => _gameManager.RequestUndoTurn();
         private void RedoTurn(object s, EventArgs e) => _gameManager.RequestRedoTurn();
 
-        // ─────────────────── UTILS ───────────────────
+        private void SaveGame(object sender, EventArgs e)
+        {
+            using (var dlg = new SaveFileDialog { Filter = "JSON|*.json" })
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                    _gameManager.SaveState(dlg.FileName);
+            }
+        }
+
         private static Image SafeImageLoad(string path, bool flipX = false)
         {
             try
@@ -287,8 +282,10 @@ namespace QueueFightGame.UI
                 if (flipX) img.RotateFlip(RotateFlipType.RotateNoneFlipX);
                 return img;
             }
-            catch { return new Bitmap(UnitDisplaySize, UnitDisplaySize); }
+            catch
+            {
+                return new Bitmap(UnitDisplaySize, UnitDisplaySize);
+            }
         }
     }
-
 }

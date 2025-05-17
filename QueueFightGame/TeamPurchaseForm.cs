@@ -45,47 +45,43 @@ namespace QueueFightGame.UI
 
         private void SetupCustomComponents()
         {
-
-            this.Text = "Сбор Команд";
-            this.ClientSize = new Size(1024, 624);
-            this.StartPosition = FormStartPosition.CenterScreen;
-
-            this.BackgroundImage = Image.FromFile("Resources/zastavka.png");
-            this.BackgroundImageLayout = ImageLayout.Stretch;
+            Text = "Сбор Команд";
+            ClientSize = new Size(1024, 624);
+            StartPosition = FormStartPosition.CenterScreen;
+            try
+            {
+                BackgroundImage = Image.FromFile("Resources/zastavka.png");
+                BackgroundImageLayout = ImageLayout.Stretch;
+            }
+            catch { }
 
             availableUnitsLabel = new Label { Text = "Доступные Бойцы:", Location = new Point(10, 10), AutoSize = true };
             availableUnitsListBox = new ListBox { Location = new Point(10, 30), Size = new Size(200, 200) };
             availableUnitsListBox.SelectedIndexChanged += AvailableUnitsListBox_SelectedIndexChanged;
 
-            unitPictureBox = new PictureBox { 
+            unitPictureBox = new PictureBox
+            {
                 Location = new Point(10, 240),
-                Size = new Size(64, 64), 
-                BorderStyle = BorderStyle.FixedSingle, 
-                SizeMode = PictureBoxSizeMode.Zoom 
+                Size = new Size(64, 64),
+                BorderStyle = BorderStyle.FixedSingle,
+                SizeMode = PictureBoxSizeMode.Zoom
             };
-
-           
-
 
             unitInfoLabel = new Label { Location = new Point(80, 240), Size = new Size(130, 100), BorderStyle = BorderStyle.Fixed3D };
 
-            // Red Team Section
             redTeamLabel = new Label { Text = "Команда Красных:", Location = new Point(250, 10), AutoSize = true, Font = new Font(this.Font, FontStyle.Bold) };
             redMoneyLabel = new Label { Text = $"Бюджет: {_redTeam.CurrentMoney:F0}", Location = new Point(400, 10), AutoSize = true };
             redTeamListBox = new ListBox { Location = new Point(250, 30), Size = new Size(200, 300) };
 
-            // Blue Team Section
             blueTeamLabel = new Label { Text = "Команда Синих:", Location = new Point(480, 10), AutoSize = true };
             blueMoneyLabel = new Label { Text = $"Бюджет: {_blueTeam.CurrentMoney:F0}", Location = new Point(630, 10), AutoSize = true };
             blueTeamListBox = new ListBox { Location = new Point(480, 30), Size = new Size(200, 300) };
 
-            // Buttons Section
             addUnitButton = new Button { Text = "Добавить ->", Location = new Point(80, 350), Size = new Size(100, 30) };
             removeUnitButton = new Button { Text = "<- Убрать", Location = new Point(80, 390), Size = new Size(100, 30) };
-            switchTeamButton = new Button { Text = "Ред. Синюю", Location = new Point(300, 350), Size = new Size(130, 30) }; // Initial text assumes Red is active
+            switchTeamButton = new Button { Text = "Ред. Синюю", Location = new Point(300, 350), Size = new Size(130, 30) };
             startBattleButton = new Button { Text = "Начать Битву", Location = new Point(550, 350), Size = new Size(130, 30), Font = new Font(this.Font, FontStyle.Bold), BackColor = Color.LightGreen };
             backButton = new Button { Text = "Назад", Location = new Point(550, 390), Size = new Size(130, 30), BackColor = Color.LightCoral };
-
 
             addUnitButton.Click += AddUnitButton_Click;
             removeUnitButton.Click += RemoveUnitButton_Click;
@@ -93,23 +89,21 @@ namespace QueueFightGame.UI
             startBattleButton.Click += StartBattleButton_Click;
             backButton.Click += BackButton_Click;
 
-
-            // Add Controls
-            this.Controls.Add(availableUnitsLabel);
-            this.Controls.Add(availableUnitsListBox);
-            this.Controls.Add(unitPictureBox);
-            this.Controls.Add(unitInfoLabel);
-            this.Controls.Add(redTeamLabel);
-            this.Controls.Add(redMoneyLabel);
-            this.Controls.Add(redTeamListBox);
-            this.Controls.Add(blueTeamLabel);
-            this.Controls.Add(blueMoneyLabel);
-            this.Controls.Add(blueTeamListBox);
-            this.Controls.Add(addUnitButton);
-            this.Controls.Add(removeUnitButton);
-            this.Controls.Add(switchTeamButton);
-            this.Controls.Add(startBattleButton);
-            this.Controls.Add(backButton);
+            Controls.Add(availableUnitsLabel);
+            Controls.Add(availableUnitsListBox);
+            Controls.Add(unitPictureBox);
+            Controls.Add(unitInfoLabel);
+            Controls.Add(redTeamLabel);
+            Controls.Add(redMoneyLabel);
+            Controls.Add(redTeamListBox);
+            Controls.Add(blueTeamLabel);
+            Controls.Add(blueMoneyLabel);
+            Controls.Add(blueTeamListBox);
+            Controls.Add(addUnitButton);
+            Controls.Add(removeUnitButton);
+            Controls.Add(switchTeamButton);
+            Controls.Add(startBattleButton);
+            Controls.Add(backButton);
 
             UpdateEditingTeamHighlight();
         }
@@ -131,7 +125,7 @@ namespace QueueFightGame.UI
                 string typeName = selectedItem.Value as string;
                 if (!string.IsNullOrEmpty(typeName) && UnitConfig.Stats.TryGetValue(typeName, out var data))
                 {
-                    unitInfoLabel.Text = $"Имя: {data.DisplayName}\nHP: {data.Health}\nЗащ: {data.Protection:P0}\nУрон: {data.Damage}\nСтоим: {data.Cost}\n----------\n{data.Description}"; // Форматируем защиту как %
+                    unitInfoLabel.Text = $"Имя: {data.DisplayName}\nHP: {data.Health}\nЗащ: {data.Protection:P0}\nУрон: {data.Damage}\nСтоим: {data.Cost}\n----------\n{data.Description}";
                     try { unitPictureBox.Image = Image.FromFile(data.IconPath); }
                     catch { unitPictureBox.Image = null; }
                 }
@@ -195,16 +189,17 @@ namespace QueueFightGame.UI
                         _currentlyEditingTeam.AddFighter(newUnit, null);
                         UpdateTeamDisplay();
                     }
-                    else { MessageBox.Show($"Недостаточно денег!"); }
+                    else
+                    {
+                        MessageBox.Show($"Недостаточно денег!");
+                    }
                 }
-                else { /* Логика если Value не string - не должно произойти */ }
             }
         }
 
         private void RemoveUnitButton_Click(object sender, EventArgs e)
         {
             ListBox activeListBox = (_currentlyEditingTeam == _redTeam) ? redTeamListBox : blueTeamListBox;
-
             if (activeListBox.SelectedItem is ListBoxItem selectedTeamItem)
             {
                 IUnit unitToRemove = selectedTeamItem.Value as IUnit;
@@ -244,40 +239,31 @@ namespace QueueFightGame.UI
                 MessageBox.Show("Обе команды должны иметь хотя бы одного бойца!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-            // Start battle
             BattleForm battleForm = new BattleForm(_redTeam, _blueTeam);
             battleForm.Show();
-            this.Hide();
-
-            battleForm.FormClosed += (s, args) => this.Close();
+            Hide();
+            battleForm.FormClosed += (s, args) => Close();
         }
 
         private void BackButton_Click(object sender, EventArgs e)
         {
-            this.Close();
-            var setupForm = System.Windows.Forms.Application.OpenForms.OfType<GameSetupForm>().FirstOrDefault();
+            Close();
+            var setupForm = Application.OpenForms.OfType<GameSetupForm>().FirstOrDefault();
             setupForm?.Show();
         }
 
         private void InitializeComponent()
         {
-            this.SuspendLayout();
-
-            this.Name = "TeamPurchaseForm";
-            this.ResumeLayout(false);
-
+            SuspendLayout();
+            Name = "TeamPurchaseForm";
+            ResumeLayout(false);
         }
 
         private class ListBoxItem
         {
             public string Text { get; set; }
             public object Value { get; set; }
-
-            public override string ToString()
-            {
-                return Text;
-            }
+            public override string ToString() { return Text; }
         }
     }
 }

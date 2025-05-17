@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace QueueFightGame
 {
-    // --- WeakFighter ---
     public class WeakFighter : BaseUnit, ICanBeHealed, ICanBeCloned, ISpecialActionWeakFighter
     {
         private bool _hasAppliedBuff = false;
@@ -69,7 +68,6 @@ namespace QueueFightGame
         }
     }
 
-    // --- StrongFighter ---
     public class StrongFighter : BaseUnit, ICanBeHealed
     {
         private ICanBeBuff _currentBuff = null;
@@ -125,11 +123,8 @@ namespace QueueFightGame
                 RemoveBuff(logger);
             }
         }
-
     }
 
-
-    // --- Healer ---
     public class Healer : BaseUnit, ICanBeHealed, ICanBeCloned, ISpecialActionHealer
     {
         public int HealRange { get; private set; }
@@ -191,7 +186,6 @@ namespace QueueFightGame
         }
     }
 
-    // --- Archer ---
     public class Archer : BaseUnit, ICanBeHealed, ICanBeCloned, ISpecialActionArcher
     {
         public int AttackRange { get; private set; }
@@ -250,7 +244,6 @@ namespace QueueFightGame
         }
     }
 
-    // --- Mage ---
     public class Mage : BaseUnit, ICanBeHealed, ISpecialActionMage
     {
         public int CloneRange { get; private set; }
@@ -290,7 +283,7 @@ namespace QueueFightGame
             }
 
             var targetToClone = possibleTargets[new Random().Next(possibleTargets.Count)];
-            int targetIndex = ownTeam.Fighters.IndexOf(targetToClone as IUnit); // Find index of the original
+            int targetIndex = ownTeam.Fighters.IndexOf(targetToClone as IUnit);
 
             int insertPosition = myIndex + 1;
             var cloneCommand = new CloneCommand(this, targetToClone, ownTeam, insertPosition, logger);

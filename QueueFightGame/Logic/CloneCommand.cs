@@ -4,45 +4,91 @@ namespace QueueFightGame
 {
     public class CloneCommand : IGameCommand
     {
-        private readonly Mage _mage;
-        private readonly ICanBeCloned _original;
+        private readonly IUnit _actor;
+        private readonly ICanBeCloned _target;
         private readonly Team _team;
-        private readonly int _insertPosition;
+        private readonly int _position;
         private readonly ILogger _logger;
 
-        private IUnit _createdClone;
+        private IUnit _clone;
 
-        public CloneCommand(Mage mage, ICanBeCloned original, Team team, int insertPosition, ILogger logger)
+        public CloneCommand(
+            IUnit actor,
+            ICanBeCloned target,
+            Team team,
+            int position,
+            ILogger logger)
         {
-            _mage = mage;
-            _original = original;
-            _team = team;
-            _insertPosition = insertPosition;
-            _logger = logger;
+            _actor = actor ?? throw new ArgumentNullException(nameof(actor));
+            _target = target ?? throw new ArgumentNullException(nameof(target));
+            _team = team ?? throw new ArgumentNullException(nameof(team));
+            _position = position < 0 ? 0 : position;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Execute()
         {
-            _createdClone = _original.Clone() as IUnit;
+            _clone = CreateClone();
+            if (_clone == null)
+            {
+                LogFailure();
+                return;
+            }
 
-            if (_createdClone != null)
-            {
-                int actualPosition = Math.Max(0, Math.Min(_insertPosition, _team.Fighters.Count));
-                _team.AddFighterAt(actualPosition, _createdClone);
-                _logger.Log($"{_mage.Name}|({_mage.ID}) ({_team.TeamName}) успешно клонировал {_original.Name}, создав {_createdClone.Name}!");
-            }
-            else
-            {
-                _logger.Log($"{_mage.Name} ({_team.TeamName}) не смог создать клон {_original.Name} (ошибка клонирования).");
-            }
+            int index = CalculateIndex();
+            AddClone(index);
+            LogSuccess(index);
         }
 
         public void Undo()
         {
-            if (_createdClone != null && _team.Fighters.Contains(_createdClone))
-            {
-                _team.RemoveFighter(_createdClone, _logger, false);
-            }
+            if (_clone == null) return;
+
+            RemoveClone();
+            LogUndo();
+        }
+
+        private IUnit CreateClone()
+        {
+            return _target.Clone() as IUnit;
+        }
+
+        private int CalculateIndex()
+        {
+            int max = _team.Fighters.Count;
+            return _position > max ? max : _position;
+        }
+
+        private void AddClone(int index)
+        {
+            _team.AddFighterAt(index, _clone);
+        }
+
+        private void RemoveClone()
+        {
+            _team.RemoveFighter(_clone, _logger, false);
+        }
+
+        private void LogSuccess(int index)
+        {
+            _logger.Log(
+                $"{_actor.Name}|({_actor.ID}) ({_team.TeamName}) клонировал {_target.Name} " +
+                $"и вставил клон {_clone.Name} на позицию {index}."
+            );
+        }
+
+        private void LogFailure()
+        {
+            _logger.Log(
+                $"{_actor.Name}|({_actor.ID}) ({_team.TeamName}) не смог клонировать {_target.Name}."
+            );
+        }
+
+        private void LogUndo()
+        {
+            _logger.Log(
+                $"Клон {_clone.Name}|({_clone.ID}) удалён из {_team.TeamName} (undo)."
+            );
         }
     }
 }

@@ -9,21 +9,21 @@ namespace QueueFightGame
         void Execute();
         void Undo();
     }
-    
+
     public class CommandManager
     {
         private readonly Stack<IGameCommand> _undoStack = new Stack<IGameCommand>();
         private readonly Stack<IGameCommand> _redoStack = new Stack<IGameCommand>();
         private const int MaxUndoLevels = 20;
         private readonly ILogger _logger;
-        
+
         private Dictionary<int, List<IGameCommand>> _commandsByRound = new Dictionary<int, List<IGameCommand>>();
         private int _currentRound = 1;
-        
+
         private Dictionary<int, List<DeadFighterRecord>> _deadFightersByRound = new Dictionary<int, List<DeadFighterRecord>>();
-        
+
         private List<int> _roundHistory = new List<int>();
-        
+
         public class DeadFighterRecord
         {
             public IUnit Unit { get; set; }
@@ -40,7 +40,7 @@ namespace QueueFightGame
         public void SetCurrentRound(int round)
         {
             _currentRound = round;
-            
+
             if (!_roundHistory.Contains(round))
                 _roundHistory.Add(round);
         }
@@ -49,7 +49,7 @@ namespace QueueFightGame
         {
             if (!_deadFightersByRound.ContainsKey(_currentRound))
                 _deadFightersByRound[_currentRound] = new List<DeadFighterRecord>();
-                
+
             _deadFightersByRound[_currentRound].Add(new DeadFighterRecord
             {
                 Unit = unit,
@@ -57,7 +57,7 @@ namespace QueueFightGame
                 Health = unit.Health,
                 Position = position
             });
-            
+
             _logger.Log($"Записан погибший боец {unit.Name} из команды {team.TeamName}.");
         }
 
@@ -76,10 +76,10 @@ namespace QueueFightGame
         {
             command.Execute();
             _undoStack.Push(command);
-            
+
             if (!_commandsByRound.ContainsKey(_currentRound))
                 _commandsByRound[_currentRound] = new List<IGameCommand>();
-            
+
             _commandsByRound[_currentRound].Add(command);
 
             if (_undoStack.Count > MaxUndoLevels)
@@ -97,12 +97,12 @@ namespace QueueFightGame
 
         public bool CanUndo => _undoStack.Count > 0;
         public bool CanRedo => _redoStack.Count > 0;
-        
+
         public bool CanUndoToRound(int round)
         {
             return round < _currentRound && _roundHistory.Contains(round);
         }
-        
+
         public List<int> GetAvailableUndoRounds()
         {
             return _roundHistory.Where(r => r < _currentRound).OrderByDescending(r => r).ToList();
@@ -137,14 +137,14 @@ namespace QueueFightGame
                 _logger.Log("Нет действий для повтора.");
             }
         }
-        
+
         public List<DeadFighterRecord> GetDeadFightersFromRound(int round)
         {
             if (_deadFightersByRound.ContainsKey(round))
                 return _deadFightersByRound[round];
             return new List<DeadFighterRecord>();
         }
-        
+
         public List<DeadFighterRecord> GetDeadFightersInRange(int targetRound, int currentRound)
         {
             var result = new List<DeadFighterRecord>();
@@ -155,13 +155,13 @@ namespace QueueFightGame
             }
             return result;
         }
-        
+
         public void ClearDeadFightersForRound(int round)
         {
             if (_deadFightersByRound.ContainsKey(round))
                 _deadFightersByRound.Remove(round);
         }
-        
+
         public int UndoToRound(int targetRound)
         {
             int currentRound = _currentRound;
@@ -216,19 +216,19 @@ namespace QueueFightGame
 
             return actionsUndone;
         }
-        
+
         private int UndoRoundCommands(List<IGameCommand> commandsToUndo)
         {
             if (commandsToUndo == null || commandsToUndo.Count == 0)
                 return 0;
-                
+
             int undoCount = 0;
             var tempStack = new Stack<IGameCommand>();
-            
+
             while (_undoStack.Count > 0)
             {
                 var cmd = _undoStack.Pop();
-                
+
                 if (commandsToUndo.Contains(cmd))
                 {
                     cmd.Undo();
@@ -240,19 +240,17 @@ namespace QueueFightGame
                     tempStack.Push(cmd);
                 }
             }
-            
+
             while (tempStack.Count > 0)
             {
                 _undoStack.Push(tempStack.Pop());
             }
-            
+
             return undoCount;
         }
-        
-        // Метод для отката только последнего раунда
+
         public int UndoLastRound(int currentRound)
         {
-            // Найти последний раунд в истории
             int lastRound = _roundHistory.Count > 0 ? _roundHistory.Max() : 0;
             if (lastRound == 0 || !_commandsByRound.ContainsKey(lastRound))
             {
@@ -260,7 +258,6 @@ namespace QueueFightGame
                 return 0;
             }
 
-            // Восстановить погибших бойцов этого раунда (если есть)
             if (_deadFightersByRound.TryGetValue(lastRound, out var deadList))
             {
                 foreach (var fighter in deadList)
@@ -280,7 +277,7 @@ namespace QueueFightGame
             {
                 commands[i].Undo();
                 _redoStack.Push(commands[i]);
-                _undoStack.Pop(); // Удалить из undo-стека
+                _undoStack.Pop();
             }
 
             _logger.Log($"Раунд {lastRound} отменён ({commands.Count} действий).");
@@ -293,8 +290,7 @@ namespace QueueFightGame
 
             return commands.Count;
         }
-        
-        // Метод для возврата только последнего отменённого раунда
+
         public int RedoLastRound(int currentRound)
         {
             int nextRound = _roundHistory.Count > 0 ? _roundHistory.Max() + 1 : 1;

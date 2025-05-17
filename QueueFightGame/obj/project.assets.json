@@ -115,17 +115,17 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Home\\.nuget\\packages\\": {},
+    "C:\\Users\\Пользователь\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightGame\\QueueFightGame.csproj",
+      "projectUniqueName": "C:\\Users\\Пользователь\\coding\\ProjectChapkin\\end\\End-Game\\QueueFightGame\\QueueFightGame.csproj",
       "projectName": "QueueFightGame",
-      "projectPath": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightGame\\QueueFightGame.csproj",
-      "packagesPath": "C:\\Users\\Home\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightGame\\obj\\",
+      "projectPath": "C:\\Users\\Пользователь\\coding\\ProjectChapkin\\end\\End-Game\\QueueFightGame\\QueueFightGame.csproj",
+      "packagesPath": "C:\\Users\\Пользователь\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Пользователь\\coding\\ProjectChapkin\\end\\End-Game\\QueueFightGame\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "UsingMicrosoftNETSdk": false,
@@ -133,7 +133,7 @@
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Home\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Пользователь\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

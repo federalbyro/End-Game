@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "F+7Iy+QDmxA=",
+  "dgSpecHash": "PfPSNQEsNj8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Home\\source\\repos\\QueueFightersGameWinForm\\QueueFightGame\\QueueFightGame.csproj",
+  "projectFilePath": "C:\\Users\\Пользователь\\coding\\ProjectChapkin\\end\\End-Game\\QueueFightGame\\QueueFightGame.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Home\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+    "C:\\Users\\Пользователь\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
   ],
   "logs": []
 }
