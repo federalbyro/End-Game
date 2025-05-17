@@ -388,47 +388,19 @@ namespace QueueFightGame
 
             if (_commandManager.CanUndo)
             {
-                // Store the current round we're undoing before we change it
-                int targetRound = Round - 1;
-                
-                // First, get all dead fighters from the previous round that need to be resurrected
-                var deadFighters = _commandManager.GetDeadFightersFromRound(targetRound);
-                
-                // Then undo all commands from the last round
+                int prevRound = Round - 1;
                 int actionsUndone = _commandManager.UndoLastRound(Round);
-                
-                // After that, we need to adjust the game state appropriately
-                if (actionsUndone > 0)
+
+                if (actionsUndone > 0 && Round > 1)
                 {
-                    // Adjust round counter - only go back one round
-                    if (Round > 1)
-                    {
-                        Round--;
-                    }
-                    
-                    // Swap attacker and defender
+                    Round--;
+                    // Меняем атакующую/защищающуюся команду обратно
                     (CurrentAttacker, CurrentDefender) = (CurrentDefender, CurrentAttacker);
-                    
-                    // Restore dead fighters to their teams
-                    foreach (var deadFighter in deadFighters)
-                    {
-                        // Restore some health to the fighter
-                        deadFighter.Unit.Health = Math.Max(1, deadFighter.Unit.MaxHealth * 0.1f);
-                        
-                        // Add the fighter back to its team
-                        int insertPosition = Math.Min(deadFighter.Position, deadFighter.Team.Fighters.Count);
-                        deadFighter.Team.AddFighterAt(insertPosition, deadFighter.Unit);
-                        
-                        Log($"Боец {deadFighter.Unit.Name} воскрешен и возвращен в команду {deadFighter.Team.TeamName}.");
-                    }
-                    
-                    // Clear the dead fighter records for this round
-                    _commandManager.ClearDeadFightersForRound(targetRound);
                 }
-                
-                CurrentState = GameState.WaitingForPlayer; // Allow next action
+
+                CurrentState = GameState.WaitingForPlayer;
                 Log("Раунд полностью отменен.");
-                OnGameStateChanged(); // Notify UI to refresh display
+                OnGameStateChanged();
             }
             else
             {

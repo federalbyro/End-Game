@@ -276,27 +276,52 @@ namespace QueueFightGame
             return undoCount;
         }
         
-        // Method to undo only the last round's commands
+        // Метод для отката только последнего раунда
         public int UndoLastRound(int currentRound)
         {
-            if (currentRound <= 1)
-            {
-                _logger.Log("Невозможно отменить действия: вы находитесь в первом раунде.");
-                return 0;
-            }
-            
-            // Find the previous round from history
-            int targetRound = _roundHistory.Where(r => r < currentRound)
-                                          .OrderByDescending(r => r)
-                                          .FirstOrDefault();
-            
-            if (targetRound == 0)
+            // Найти последний раунд в истории
+            int lastRound = _roundHistory.Count > 0 ? _roundHistory.Max() : 0;
+            if (lastRound == 0 || !_commandsByRound.ContainsKey(lastRound))
             {
                 _logger.Log("Нет предыдущих раундов для отмены.");
                 return 0;
             }
-            
-            return UndoToRound(targetRound);
+
+            // Восстановить погибших бойцов этого раунда (если есть)
+            if (_deadFightersByRound.TryGetValue(lastRound, out var deadList))
+            {
+                foreach (var fighter in deadList)
+                {
+                    if (!fighter.Team.Fighters.Contains(fighter.Unit))
+                    {
+                        fighter.Unit.Health = Math.Max(1, fighter.Unit.MaxHealth * 0.1f);
+                        int insertPosition = Math.Min(fighter.Position, fighter.Team.Fighters.Count);
+                        fighter.Team.AddFighterAt(insertPosition, fighter.Unit);
+                        _logger.Log($"Боец {fighter.Unit.Name} воскрешен и возвращен в команду {fighter.Team.TeamName}.");
+                    }
+                }
+            }
+
+            // Откатить все команды этого раунда (в обратном порядке)
+            var commands = _commandsByRound[lastRound];
+            for (int i = commands.Count - 1; i >= 0; i--)
+            {
+                commands[i].Undo();
+                _redoStack.Push(commands[i]);
+                _undoStack.Pop(); // Удалить из undo-стека
+            }
+
+            _logger.Log($"Раунд {lastRound} отменён ({commands.Count} действий).");
+
+            // Удалить этот раунд из истории
+            _commandsByRound.Remove(lastRound);
+            _deadFightersByRound.Remove(lastRound);
+            _roundHistory.Remove(lastRound);
+
+            // Обновить текущий раунд
+            _currentRound = _roundHistory.Count > 0 ? _roundHistory.Max() : 1;
+
+            return commands.Count;
         }
     }
 }

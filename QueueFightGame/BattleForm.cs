@@ -32,7 +32,10 @@ namespace QueueFightGame.UI
         private Button _nextBtn;
         private Button _undoBtn;
         private Button _exitBtn;
+        private Button _toggleLogButton; // Кнопка для скрытия/показа логов
         private bool _redOnLeft;
+        private bool _logsVisible = true; // Начальное состояние - логи видны
+        private int _logBoxHeight = 180; // Запомним высоту лога для восстановления
 
         private readonly ILogger _uiLogger;
         public BattleForm(GameManager existingManager)
@@ -115,7 +118,7 @@ namespace QueueFightGame.UI
             _logBox = new TextBox
             {
                 Dock = DockStyle.Bottom,
-                Height = 180,
+                Height = _logBoxHeight,
                 Multiline = true,
                 ReadOnly = true,
                 ScrollBars = ScrollBars.Vertical,
@@ -126,6 +129,7 @@ namespace QueueFightGame.UI
             _nextBtn = MakeButton("Следующий ход", NextTurn);
             _undoBtn = MakeButton("Отменить ход", UndoTurn);
             _exitBtn = MakeButton("Выход", (s, e) => Close());
+            _toggleLogButton = MakeButton("Скрыть логи", ToggleLogs);
 
             var buttonBar = new FlowLayoutPanel
             {
@@ -144,93 +148,36 @@ namespace QueueFightGame.UI
                         _gameManager.SaveState(dlg.FileName);
             });
             
-            // Add a button to show undo history
-            var undoHistoryBtn = MakeButton("История ходов", ShowUndoHistory);
-            
-            buttonBar.Controls.AddRange(new[] { saveBtn, _nextBtn, undoBtn, undoHistoryBtn, _exitBtn });
+            // Правильное добавление кнопок в панель
+            buttonBar.Controls.AddRange(new[] { saveBtn, _nextBtn, _undoBtn, _toggleLogButton, _exitBtn });
             _battleField.Controls.Add(buttonBar);
         }
         
-        // Method to show a dialog with available rounds to undo to
-        private void ShowUndoHistory(object sender, EventArgs e)
+        // Новый метод для переключения видимости логов
+        private void ToggleLogs(object sender, EventArgs e)
         {
-            // Get available rounds from command manager
-            var availableRounds = _gameManager.CommandManager.GetAvailableUndoRounds();
-            if (availableRounds.Count == 0)
+            _logsVisible = !_logsVisible;
+            
+            if (_logsVisible)
             {
-                MessageBox.Show("Нет доступных раундов для отмены.", "История ходов", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                // Показываем логи
+                _logBox.Height = _logBoxHeight; // Восстанавливаем запомненную высоту
+                _logBox.Visible = true;
+                _toggleLogButton.Text = "Скрыть логи";
+            }
+            else
+            {
+                // Скрываем логи
+                _logBoxHeight = _logBox.Height; // Запоминаем текущую высоту перед скрытием
+                _logBox.Height = 0;
+                _logBox.Visible = false;
+                _toggleLogButton.Text = "Показать логи";
             }
             
-            // Create form to display rounds
-            using (var form = new Form
-            {
-                Text = "История раундов",
-                Size = new Size(300, 400),
-                StartPosition = FormStartPosition.CenterParent,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                MaximizeBox = false,
-                MinimizeBox = false
-            })
-            {
-                var listBox = new ListBox
-                {
-                    Dock = DockStyle.Fill,
-                    Font = new Font("Segoe UI", 12f)
-                };
-                
-                // Populate list with rounds
-                foreach (int round in availableRounds)
-                {
-                    listBox.Items.Add($"Раунд {round}");
-                }
-                
-                var buttonPanel = new Panel
-                {
-                    Dock = DockStyle.Bottom,
-                    Height = 50
-                };
-                
-                var undoButton = new Button
-                {
-                    Text = "Отменить до выбранного",
-                    Dock = DockStyle.Right,
-                    Width = 180
-                };
-                
-                var cancelButton = new Button
-                {
-                    Text = "Отмена",
-                    Dock = DockStyle.Left,
-                    Width = 100
-                };
-                
-                undoButton.Click += (s, args) =>
-                {
-                    if (listBox.SelectedIndex >= 0)
-                    {
-                        int selectedRound = availableRounds[listBox.SelectedIndex];
-                        _gameManager.RequestUndoToRound(selectedRound);
-                        form.DialogResult = DialogResult.OK;
-                    }
-                };
-                
-                cancelButton.Click += (s, args) =>
-                {
-                    form.DialogResult = DialogResult.Cancel;
-                };
-                
-                buttonPanel.Controls.Add(cancelButton);
-                buttonPanel.Controls.Add(undoButton);
-                
-                form.Controls.Add(listBox);
-                form.Controls.Add(buttonPanel);
-                
-                form.ShowDialog(this);
-            }
+            // Перерисовываем форму для обновления расположения элементов
+            _battleField.PerformLayout();
         }
-        
+
         private FlowLayoutPanel CreateTeamFlow(FlowDirection dir)
         {
             var pnl = new FlowLayoutPanel
