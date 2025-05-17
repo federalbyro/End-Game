@@ -10,13 +10,11 @@ namespace QueueFightGame
         public void Log(string message)
         {
             _logMessages.Add(message);
-            // Optionally add timestamp if needed:
-            // _logMessages.Add($"{System.DateTime.Now:HH:mm:ss} - {message}");
         }
 
         public List<string> GetLogHistory()
         {
-            return _logMessages.ToList(); // Return a copy
+            return _logMessages.ToList();
         }
 
         public void ClearLog()

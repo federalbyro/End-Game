@@ -10,7 +10,7 @@ namespace QueueFightGame
         public string TeamName { get; private set; }
         public float InitialMoney { get; private set; }
         public float CurrentMoney { get; private set; }
-        public bool IsPlayerControlled { get; private set; } // Could be useful later
+        public bool IsPlayerControlled { get; private set; }
 
         public Team(string teamName, float initialMoney, bool isPlayer = true)
         {
@@ -55,7 +55,6 @@ namespace QueueFightGame
             }
         }
 
-        // Used by commands or purchase screen removal
         public void RemoveFighter(IUnit fighter, ILogger logger, bool refund = false)
         {
             if (Fighters.Remove(fighter))
@@ -73,7 +72,7 @@ namespace QueueFightGame
 
         public bool HasFighters()
         {
-            return Fighters.Any(f => f.Health > 0); // Check for living fighters
+            return Fighters.Any(f => f.Health > 0);
         }
 
         public List<IUnit> GetLivingFighters()
@@ -81,13 +80,11 @@ namespace QueueFightGame
             return Fighters.Where(f => f.Health > 0).ToList();
         }
 
-        // Used by AttackCommand Undo
         public void AddFighterAt(int index, IUnit fighter)
         {
             if (fighter == null)
                 throw new ArgumentNullException(nameof(fighter));
                 
-            // Check if index is valid, if not, append to end
             if (index < 0 || index > Fighters.Count)
                 index = Fighters.Count;
                 
@@ -98,7 +95,6 @@ namespace QueueFightGame
 
         public IUnit GetNextFighter()
         {
-            // Return the first living fighter
             return Fighters.FirstOrDefault(f => f.Health > 0);
         }
 
@@ -112,7 +108,6 @@ namespace QueueFightGame
             }
         }
 
-        // Resets units to full health and clears temporary states (like HasUsedSpecial)
         public void ResetUnitsForNewBattle()
         {
             foreach (var unit in Fighters)
@@ -122,16 +117,8 @@ namespace QueueFightGame
                 {
                     specialUnit.HasUsedSpecial = false;
                 }
-                if (unit is ISpecialActionWeakFighter squire)
-                {
-                    // Reset buff status if needed, though it's tied to command execution usually
-                    // squire.MarkBuffApplied(null); // Might cause issues with Undo? Careful here.
-                }
-                if (unit is StrongFighter knight)
-                {
-                    // Remove buffs at start? Or keep between rounds? Remove seems safer.
-                    // knight.RemoveBuff(null); // Logger might be null here
-                }
+                if (unit is ISpecialActionWeakFighter squire){ }
+                if (unit is StrongFighter knight) { }
             }
         }
     }

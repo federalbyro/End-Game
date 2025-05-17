@@ -8,7 +8,6 @@ namespace QueueFightGame
     {
         void Execute();
         void Undo();
-        // string GetLogMessage(); // Optional: command provides its own log string
     }
     
     public class CommandManager
@@ -18,17 +17,13 @@ namespace QueueFightGame
         private const int MaxUndoLevels = 20;
         private readonly ILogger _logger;
         
-        // Track commands by round
         private Dictionary<int, List<IGameCommand>> _commandsByRound = new Dictionary<int, List<IGameCommand>>();
         private int _currentRound = 1;
         
-        // Track dead fighters by round
         private Dictionary<int, List<DeadFighterRecord>> _deadFightersByRound = new Dictionary<int, List<DeadFighterRecord>>();
         
-        // Track the sequence of rounds to allow undoing to specific rounds
         private List<int> _roundHistory = new List<int>();
         
-        // Class to track dead fighter information
         public class DeadFighterRecord
         {
             public IUnit Unit { get; set; }
@@ -42,17 +37,14 @@ namespace QueueFightGame
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        // Set current round number
         public void SetCurrentRound(int round)
         {
             _currentRound = round;
             
-            // Add the round to history if not already present
             if (!_roundHistory.Contains(round))
                 _roundHistory.Add(round);
         }
 
-        // Record a dead fighter
         public void RecordDeadFighter(IUnit unit, Team team, int position)
         {
             if (!_deadFightersByRound.ContainsKey(_currentRound))
@@ -69,7 +61,6 @@ namespace QueueFightGame
             _logger.Log($"Записан погибший боец {unit.Name} из команды {team.TeamName}.");
         }
 
-        // Новый метод для очистки истории
         public void ClearHistory()
         {
             _undoStack.Clear();
@@ -86,13 +77,11 @@ namespace QueueFightGame
             command.Execute();
             _undoStack.Push(command);
             
-            // Track which round this command belongs to
             if (!_commandsByRound.ContainsKey(_currentRound))
                 _commandsByRound[_currentRound] = new List<IGameCommand>();
             
             _commandsByRound[_currentRound].Add(command);
 
-            // Limit undo stack size
             if (_undoStack.Count > MaxUndoLevels)
             {
                 var list = _undoStack.ToList();
@@ -109,13 +98,11 @@ namespace QueueFightGame
         public bool CanUndo => _undoStack.Count > 0;
         public bool CanRedo => _redoStack.Count > 0;
         
-        // Method to check if we can undo to a specific round
         public bool CanUndoToRound(int round)
         {
             return round < _currentRound && _roundHistory.Contains(round);
         }
         
-        // Get a list of available rounds for undo purposes
         public List<int> GetAvailableUndoRounds()
         {
             return _roundHistory.Where(r => r < _currentRound).OrderByDescending(r => r).ToList();
@@ -151,7 +138,6 @@ namespace QueueFightGame
             }
         }
         
-        // Get dead fighters from a specific round
         public List<DeadFighterRecord> GetDeadFightersFromRound(int round)
         {
             if (_deadFightersByRound.ContainsKey(round))
@@ -159,7 +145,6 @@ namespace QueueFightGame
             return new List<DeadFighterRecord>();
         }
         
-        // Get all dead fighters from rounds between target and current
         public List<DeadFighterRecord> GetDeadFightersInRange(int targetRound, int currentRound)
         {
             var result = new List<DeadFighterRecord>();
@@ -171,17 +156,14 @@ namespace QueueFightGame
             return result;
         }
         
-        // Remove dead fighter records for a round
         public void ClearDeadFightersForRound(int round)
         {
             if (_deadFightersByRound.ContainsKey(round))
                 _deadFightersByRound.Remove(round);
         }
         
-        // Method to undo to a specific round
         public int UndoToRound(int targetRound)
         {
-            // FIX: Use _currentRound as the actual current round, not just _roundHistory's max
             int currentRound = _currentRound;
 
             if (targetRound >= currentRound || !_roundHistory.Contains(targetRound))
@@ -192,7 +174,6 @@ namespace QueueFightGame
 
             int actionsUndone = 0;
 
-            // Restore all dead fighters from rounds being undone BEFORE undoing commands
             for (int round = targetRound + 1; round <= currentRound; round++)
             {
                 if (_deadFightersByRound.TryGetValue(round, out var deadList))
@@ -210,7 +191,6 @@ namespace QueueFightGame
                 }
             }
 
-            // Undo each round starting from the most recent
             List<int> roundsToUndo = _roundHistory.Where(r => r > targetRound && r <= currentRound)
                                                   .OrderByDescending(r => r)
                                                   .ToList();
@@ -230,16 +210,13 @@ namespace QueueFightGame
                 _deadFightersByRound.Remove(round);
             }
 
-            // Remove all rounds > targetRound from _roundHistory
             _roundHistory.RemoveAll(r => r > targetRound);
 
-            // Update _currentRound to the new round (so further undo works correctly)
             _currentRound = targetRound;
 
             return actionsUndone;
         }
         
-        // Helper method to undo commands for a specific round
         private int UndoRoundCommands(List<IGameCommand> commandsToUndo)
         {
             if (commandsToUndo == null || commandsToUndo.Count == 0)
@@ -248,26 +225,22 @@ namespace QueueFightGame
             int undoCount = 0;
             var tempStack = new Stack<IGameCommand>();
             
-            // Process all commands in the undo stack
             while (_undoStack.Count > 0)
             {
                 var cmd = _undoStack.Pop();
                 
                 if (commandsToUndo.Contains(cmd))
                 {
-                    // This command belongs to the round we're undoing
                     cmd.Undo();
                     _redoStack.Push(cmd);
                     undoCount++;
                 }
                 else
                 {
-                    // This command is from a different round, keep it
                     tempStack.Push(cmd);
                 }
             }
             
-            // Restore commands from other rounds
             while (tempStack.Count > 0)
             {
                 _undoStack.Push(tempStack.Pop());
@@ -302,7 +275,6 @@ namespace QueueFightGame
                 }
             }
 
-            // Откатить все команды этого раунда (в обратном порядке)
             var commands = _commandsByRound[lastRound];
             for (int i = commands.Count - 1; i >= 0; i--)
             {
@@ -313,12 +285,10 @@ namespace QueueFightGame
 
             _logger.Log($"Раунд {lastRound} отменён ({commands.Count} действий).");
 
-            // Удалить этот раунд из истории
             _commandsByRound.Remove(lastRound);
             _deadFightersByRound.Remove(lastRound);
             _roundHistory.Remove(lastRound);
 
-            // Обновить текущий раунд
             _currentRound = _roundHistory.Count > 0 ? _roundHistory.Max() : 1;
 
             return commands.Count;
@@ -327,15 +297,11 @@ namespace QueueFightGame
         // Метод для возврата только последнего отменённого раунда
         public int RedoLastRound(int currentRound)
         {
-            // Следующий раунд после текущего
             int nextRound = _roundHistory.Count > 0 ? _roundHistory.Max() + 1 : 1;
-            // Но если уже есть команды для nextRound, значит redo невозможен
             if (!_commandsByRound.ContainsKey(nextRound) && _redoStack.Count > 0)
             {
-                // Собираем команды для этого раунда из redo-стека (в обратном порядке)
                 var commandsToRedo = new List<IGameCommand>();
                 int count = 0;
-                // Считаем сколько команд было в последнем undone раунде
                 foreach (var kv in _commandsByRound)
                 {
                     if (kv.Key == currentRound)
@@ -344,7 +310,6 @@ namespace QueueFightGame
                         break;
                     }
                 }
-                // Если не нашли, пробуем по количеству в redo-стеке (fallback)
                 if (count == 0)
                     count = _redoStack.Count;
 
@@ -352,7 +317,7 @@ namespace QueueFightGame
                 {
                     commandsToRedo.Add(_redoStack.Pop());
                 }
-                commandsToRedo.Reverse(); // Чтобы порядок был как при исполнении
+                commandsToRedo.Reverse();
 
                 foreach (var cmd in commandsToRedo)
                 {
@@ -360,7 +325,6 @@ namespace QueueFightGame
                     _undoStack.Push(cmd);
                 }
 
-                // Добавляем команды в _commandsByRound и _roundHistory
                 _commandsByRound[nextRound] = new List<IGameCommand>(commandsToRedo);
                 _roundHistory.Add(nextRound);
 

@@ -1,11 +1,4 @@
-﻿// BattleFormImproved.cs — FIXED VERSION (без Designer)
-// ────────────────────────────────────────────────────────────────
-// * Убрана лишняя строка InitializeComponent();
-// * Добавлен Method SafeImageLoad кросс‑платформенный
-// * Исправлена ширина _redPanel/_bluePanel при ресайзе
-// * Других изменений логики нет — форма полностью автономна, Designer‑файл больше не нужен
-// ----------------------------------------------------------------
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,7 +6,7 @@ using System.Text;
 
 namespace QueueFightGame.UI
 {
-    public class BattleForm : Form //  designer не нужен → класс не partial
+    public class BattleForm : Form
     {
         private const int UnitDisplaySize = 128;
         private const int UnitDisplayMargin = 8;
@@ -31,26 +24,24 @@ namespace QueueFightGame.UI
         private TextBox _logBox;
         private Button _nextBtn;
         private Button _undoBtn;
-        private Button _redoBtn; // Новая кнопка Redo
+        private Button _redoBtn;
         private Button _exitBtn;
-        private Button _toggleLogButton; // Кнопка для скрытия/показа логов
+        private Button _toggleLogButton;
         private bool _redOnLeft;
-        private bool _logsVisible = true; // Начальное состояние - логи видны
-        private int _logBoxHeight = 180; // Запомним высоту лога для восстановления
+        private bool _logsVisible = true;
+        private int _logBoxHeight = 180;
 
         private readonly ILogger _uiLogger;
         public BattleForm(GameManager existingManager)
         {
             if (existingManager == null) throw new ArgumentNullException(nameof(existingManager));
             _gameManager = existingManager;
-            _uiLogger = existingManager.Logger;      // у GameManager есть свойство Logger
+            _uiLogger = existingManager.Logger;
             BuildUi();
 
-            // Подписываемся на событие сразу — это вызовет ApplyState и сразу отрисует всё
             _gameManager.GameStateChanged += OnGameStateChanged;
             _gameManager.GameOver += (s, e) => { /* можно показать окно результата */ };
 
-            // Т.к. мы загружаем состояние, не вызываем StartGame, а сразу показываем текущее
             _gameManager.OnGameStateChanged();
         }
 
@@ -59,7 +50,7 @@ namespace QueueFightGame.UI
             _battleLogger = new MemoryLogger();
             _gameManager = new GameManager(_battleLogger);
 
-            BuildUi();   // ← Designer больше не вызывается
+            BuildUi();
 
             _gameManager.GameStateChanged += OnGameStateChanged;
             _gameManager.GameOver += (s, e) => { };
@@ -70,18 +61,15 @@ namespace QueueFightGame.UI
         private void BuildUi()
         {
             Text = "Поле битвы";
-            // Убираем рамки и сразу разворачиваем на весь экран
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
 
-            // Можно оставить ClientSize на всякий случай, но при Maximize он не нужен
             ClientSize = new Size(1920, 1080);
 
             StartPosition = FormStartPosition.CenterScreen;
             AutoScaleMode = AutoScaleMode.Dpi;
             DoubleBuffered = true;
 
-            // Фоновая панель — она дёргает background и растягивается благодаря Dock=Fill
             _battleField = new Panel
             {
                 Dock = DockStyle.Fill,
@@ -91,7 +79,6 @@ namespace QueueFightGame.UI
             };
             Controls.Add(_battleField);
 
-            // Потоковые панели под команды
             _redPanel = CreateTeamFlow(FlowDirection.LeftToRight);
             _bluePanel = CreateTeamFlow(FlowDirection.RightToLeft);
             _battleField.Controls.Add(_redPanel);
@@ -150,33 +137,28 @@ namespace QueueFightGame.UI
                         _gameManager.SaveState(dlg.FileName);
             });
             
-            // Добавляем Redo-кнопку в панель
             buttonBar.Controls.AddRange(new[] { saveBtn, _nextBtn, _undoBtn, _redoBtn, _toggleLogButton, _exitBtn });
             _battleField.Controls.Add(buttonBar);
         }
         
-        // Новый метод для переключения видимости логов
         private void ToggleLogs(object sender, EventArgs e)
         {
             _logsVisible = !_logsVisible;
             
             if (_logsVisible)
             {
-                // Показываем логи
-                _logBox.Height = _logBoxHeight; // Восстанавливаем запомненную высоту
+                _logBox.Height = _logBoxHeight;
                 _logBox.Visible = true;
                 _toggleLogButton.Text = "Скрыть логи";
             }
             else
             {
-                // Скрываем логи
-                _logBoxHeight = _logBox.Height; // Запоминаем текущую высоту перед скрытием
+                _logBoxHeight = _logBox.Height;
                 _logBox.Height = 0;
                 _logBox.Visible = false;
                 _toggleLogButton.Text = "Показать логи";
             }
             
-            // Перерисовываем форму для обновления расположения элементов
             _battleField.PerformLayout();
         }
 
@@ -193,7 +175,6 @@ namespace QueueFightGame.UI
                 Margin = new Padding(0),
                 Padding = new Padding(UnitDisplayMargin)
             };
-            // при ресайзе держим половину ширины
             Resize += (s, e) => pnl.Width = ClientSize.Width / 2 - 60;
             return pnl;
         }
@@ -238,7 +219,7 @@ namespace QueueFightGame.UI
             {
                 _statusLabel.Text = "Обработка…"; _statusLabel.ForeColor = Color.Orange;
             }
-            else // GameOver
+            else
             {
                 _statusLabel.Text = "Финал"; _statusLabel.ForeColor = Color.Red;
                 _nextBtn.Enabled = _undoBtn.Enabled = false; _exitBtn.Text = "Закрыть";
@@ -246,9 +227,9 @@ namespace QueueFightGame.UI
 
             _nextBtn.Enabled = e.CurrentState == GameState.WaitingForPlayer;
             _undoBtn.Enabled = _gameManager.CommandManager.CanUndo && e.CurrentState == GameState.WaitingForPlayer;
-            _redoBtn.Enabled = _gameManager.CommandManager.CanRedo && e.CurrentState == GameState.WaitingForPlayer; // Redo доступен только если можно и в ожидании
+            _redoBtn.Enabled = _gameManager.CommandManager.CanRedo && e.CurrentState == GameState.WaitingForPlayer;
 
-            DrawTeam(_bluePanel, e.BlueTeamSnapshot,  /*flip=*/false); // синие слева – лица вправо
+            DrawTeam(_bluePanel, e.BlueTeamSnapshot,  /*flip=*/false);
             DrawTeam(_redPanel, e.RedTeamSnapshot,   /*flip=*/true);
 
             _logBox.Lines = e.LogMessages.ToArray();
@@ -275,7 +256,7 @@ namespace QueueFightGame.UI
                     Font = new Font("Segoe UI", 7f, FontStyle.Bold),
                     Location = new Point(2, 2)
                 };
-                pic.Controls.Add(idTag);   // ➟ нужен pic.Controls вместо cont
+                pic.Controls.Add(idTag);
                 pic.Controls.SetChildIndex(idTag, 0);
 
                 var lbl = new Label
@@ -295,7 +276,7 @@ namespace QueueFightGame.UI
         // ─────────────────── BUTTONS ───────────────────
         private void NextTurn(object s, EventArgs e) => _gameManager.RequestNextTurn();
         private void UndoTurn(object s, EventArgs e) => _gameManager.RequestUndoTurn();
-        private void RedoTurn(object s, EventArgs e) => _gameManager.RequestRedoTurn(); // Новый обработчик
+        private void RedoTurn(object s, EventArgs e) => _gameManager.RequestRedoTurn();
 
         // ─────────────────── UTILS ───────────────────
         private static Image SafeImageLoad(string path, bool flipX = false)
@@ -306,7 +287,7 @@ namespace QueueFightGame.UI
                 if (flipX) img.RotateFlip(RotateFlipType.RotateNoneFlipX);
                 return img;
             }
-            catch { return new Bitmap(UnitDisplaySize, UnitDisplaySize); } // fallback
+            catch { return new Bitmap(UnitDisplaySize, UnitDisplaySize); }
         }
     }
 

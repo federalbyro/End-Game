@@ -11,18 +11,18 @@ namespace QueueFightGame.UI
         private Button randomButton;
         private Button purchaseButton;
         private Button backButton;
-        private ILogger uiLogger; // For potential logging during setup
+        private ILogger uiLogger;
 
-        private const string BgPath = "Resources/zastavka.png"; // ваш PNG-фон
-        private readonly Color BtnBack = Color.FromArgb(40, 40, 40);   // тёмный графит
-        private readonly Color BtnBorder = Color.FromArgb(80, 0, 0);     // бордовый кант
+        private const string BgPath = "Resources/zastavka.png"; //PNG-фон
+        private readonly Color BtnBack = Color.FromArgb(40, 40, 40);
+        private readonly Color BtnBorder = Color.FromArgb(80, 0, 0);
         private readonly Color BtnHover = Color.FromArgb(70, 70, 70);
 
         public GameSetupForm()
         {
             InitializeComponent();
             SetupCustomComponents();
-            // Use MemoryLogger even here if setup actions need logging visible later
+
             uiLogger = new MemoryLogger();
         }
 
@@ -42,7 +42,6 @@ namespace QueueFightGame.UI
             }
             catch { /* если файла нет – просто остаётся сплошной цвет */ }
 
-            // ── создаём кнопки
             randomButton = MakeDungeonButton("Случайный Бой", 140, 50);
             purchaseButton = MakeDungeonButton("Собрать Команды", 140, 110);
             backButton = MakeDungeonButton("Назад", 140, 170);
@@ -68,7 +67,6 @@ namespace QueueFightGame.UI
                 FlatStyle = FlatStyle.Flat
             };
 
-            // оформляем рамку и эффекты
             btn.FlatAppearance.BorderSize = 1;
             btn.FlatAppearance.BorderColor = BtnBorder;
             btn.FlatAppearance.MouseDownBackColor = BtnBorder;
@@ -79,7 +77,7 @@ namespace QueueFightGame.UI
 
         private void RandomButton_Click(object sender, EventArgs e)
         {
-            float budget = 100; // Default budget for random teams
+            float budget = 100;
             Team redTeam = GenerateRandomTeam("Красные", budget);
             Team blueTeam = GenerateRandomTeam("Синие", budget);
 
@@ -97,9 +95,8 @@ namespace QueueFightGame.UI
             Team team = new Team(name, budget);
             var availableUnits = UnitConfig.Stats.Keys.ToList();
             Random random = new Random();
-            int attempts = 0; // Prevent infinite loop if budget too low
+            int attempts = 0;
 
-            // Simple random generation: pick random units until budget runs out
             while (team.CurrentMoney > 0 && availableUnits.Count > 0 && attempts < 50)
             {
                 string randomUnitType = availableUnits[random.Next(availableUnits.Count)];
@@ -108,17 +105,15 @@ namespace QueueFightGame.UI
                 if (team.CanAfford(unitData.Cost))
                 {
                     IUnit unit = UnitFactory.CreateUnit(randomUnitType);
-                    team.AddFighter(unit, null); // No logger needed for random generation display
+                    team.AddFighter(unit, null);
                 }
                 else
                 {
-                    // Remove unit type if too expensive to avoid repeatedly trying it
                     availableUnits.Remove(randomUnitType);
                 }
                 attempts++;
             }
 
-            // Ensure team is not empty if possible (add cheapest unit if empty and affordable)
             if (!team.Fighters.Any())
             {
                 var cheapestUnit = UnitConfig.Stats.OrderBy(kv => kv.Value.Cost).FirstOrDefault();
@@ -135,43 +130,32 @@ namespace QueueFightGame.UI
 
         private void PurchaseButton_Click(object sender, EventArgs e)
         {
-            // Open the purchase form
-            // Pass budget, maybe team names
-            float budget = 100; // Or get from settings
+            float budget = 100;
             TeamPurchaseForm purchaseForm = new TeamPurchaseForm(budget);
             purchaseForm.Show();
-            this.Hide(); // Hide setup form
+            this.Hide();
 
-            purchaseForm.FormClosed += (s, args) => this.Close(); // Close setup when purchase is done/closed
+            purchaseForm.FormClosed += (s, args) => this.Close();
         }
 
         private void BackButton_Click(object sender, EventArgs e)
         {
-            // Need a way to show the main menu again if it was hidden
-            // This requires passing a reference or using a singleton/static approach (less ideal)
-            // Simple way: just close this form. The MainMenuForm's FormClosed handler should exit app.
-            // Better way: MainMenuForm listens for GameSetupForm closing and shows itself.
             this.Close();
-            // Find and show MainMenuForm if it exists? Risky.
-            // Let's assume closing this form triggers closure of the hidden MainMenuForm via the event handler set there.
         }
 
         private void StartBattle(Team redTeam, Team blueTeam)
         {
             BattleForm battleForm = new BattleForm(redTeam, blueTeam);
             battleForm.Show();
-            this.Hide(); // Hide this form
+            this.Hide();
 
-            battleForm.FormClosed += (s, args) => this.Close(); // Ensure app closes when battle ends
+            battleForm.FormClosed += (s, args) => this.Close();
         }
 
-        // Required by designer
         private void InitializeComponent()
         {
             this.SuspendLayout();
-            //
-            // GameSetupForm
-            //
+
             this.Name = "GameSetupForm";
             this.ResumeLayout(false);
         }

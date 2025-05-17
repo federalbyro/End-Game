@@ -13,7 +13,6 @@ namespace QueueFightGame.UI
         private Team _blueTeam;
         private Team _currentlyEditingTeam;
 
-        // UI Elements (Declare fields)
         private ListBox availableUnitsListBox;
         private ListBox redTeamListBox;
         private ListBox blueTeamListBox;
@@ -22,13 +21,13 @@ namespace QueueFightGame.UI
         private Label blueTeamLabel;
         private Label redMoneyLabel;
         private Label blueMoneyLabel;
-        private Label unitInfoLabel; // To display stats of selected unit
-        private PictureBox unitPictureBox; // To display icon
+        private Label unitInfoLabel;
+        private PictureBox unitPictureBox;
         private Button addUnitButton;
         private Button removeUnitButton;
-        private Button switchTeamButton; // Button to switch between editing Red and Blue
+        private Button switchTeamButton;
         private Button startBattleButton;
-        private Button backButton; // Go back to setup menu
+        private Button backButton;
         private const int HeroPreviewSize = 128;
 
         public TeamPurchaseForm(float budget)
@@ -36,7 +35,7 @@ namespace QueueFightGame.UI
             _initialBudget = budget;
             _redTeam = new Team("Красные", _initialBudget);
             _blueTeam = new Team("Синие", _initialBudget);
-            _currentlyEditingTeam = _redTeam; // Start editing Red team
+            _currentlyEditingTeam = _redTeam;
 
             InitializeComponent();
             SetupCustomComponents();
@@ -48,18 +47,16 @@ namespace QueueFightGame.UI
         {
 
             this.Text = "Сбор Команд";
-            this.ClientSize = new Size(1024, 624); // Adjust size as needed
+            this.ClientSize = new Size(1024, 624);
             this.StartPosition = FormStartPosition.CenterScreen;
 
             this.BackgroundImage = Image.FromFile("Resources/zastavka.png");
             this.BackgroundImageLayout = ImageLayout.Stretch;
 
-            // Available Units Section
             availableUnitsLabel = new Label { Text = "Доступные Бойцы:", Location = new Point(10, 10), AutoSize = true };
             availableUnitsListBox = new ListBox { Location = new Point(10, 30), Size = new Size(200, 200) };
             availableUnitsListBox.SelectedIndexChanged += AvailableUnitsListBox_SelectedIndexChanged;
 
-            // Unit Info Section
             unitPictureBox = new PictureBox { 
                 Location = new Point(10, 240),
                 Size = new Size(64, 64), 
@@ -122,7 +119,6 @@ namespace QueueFightGame.UI
             availableUnitsListBox.Items.Clear();
             foreach (var unitData in UnitConfig.Stats.Values.OrderBy(u => u.Cost))
             {
-                // Store the type name in the item's Tag for later use
                 var item = new ListBoxItem { Text = $"{unitData.DisplayName} ({unitData.Cost})", Value = unitData.TypeName };
                 availableUnitsListBox.Items.Add(item);
             }
@@ -132,15 +128,14 @@ namespace QueueFightGame.UI
         {
             if (availableUnitsListBox.SelectedItem is ListBoxItem selectedItem)
             {
-                // Value здесь - это string (TypeName)
-                string typeName = selectedItem.Value as string; // Используем 'as' для безопасного приведения
+                string typeName = selectedItem.Value as string;
                 if (!string.IsNullOrEmpty(typeName) && UnitConfig.Stats.TryGetValue(typeName, out var data))
                 {
                     unitInfoLabel.Text = $"Имя: {data.DisplayName}\nHP: {data.Health}\nЗащ: {data.Protection:P0}\nУрон: {data.Damage}\nСтоим: {data.Cost}\n----------\n{data.Description}"; // Форматируем защиту как %
                     try { unitPictureBox.Image = Image.FromFile(data.IconPath); }
                     catch { unitPictureBox.Image = null; }
                 }
-                else // Если приведение к string не удалось или нет данных в конфиге
+                else
                 {
                     unitInfoLabel.Text = "";
                     unitPictureBox.Image = null;
@@ -173,7 +168,7 @@ namespace QueueFightGame.UI
             if (_currentlyEditingTeam == _redTeam)
             {
                 redTeamLabel.Font = new Font(this.Font, FontStyle.Bold);
-                redTeamListBox.BackColor = SystemColors.Info; // Highlight red list
+                redTeamListBox.BackColor = SystemColors.Info;
                 blueTeamLabel.Font = new Font(this.Font, FontStyle.Regular);
                 blueTeamListBox.BackColor = SystemColors.Window;
             }
@@ -182,7 +177,7 @@ namespace QueueFightGame.UI
                 redTeamLabel.Font = new Font(this.Font, FontStyle.Regular);
                 redTeamListBox.BackColor = SystemColors.Window;
                 blueTeamLabel.Font = new Font(this.Font, FontStyle.Bold);
-                blueTeamListBox.BackColor = SystemColors.Info; // Highlight blue list
+                blueTeamListBox.BackColor = SystemColors.Info;
             }
         }
 
@@ -190,7 +185,6 @@ namespace QueueFightGame.UI
         {
             if (availableUnitsListBox.SelectedItem is ListBoxItem selectedItem)
             {
-                // Value здесь - это string (TypeName)
                 string typeName = selectedItem.Value as string;
                 if (!string.IsNullOrEmpty(typeName))
                 {
@@ -213,11 +207,10 @@ namespace QueueFightGame.UI
 
             if (activeListBox.SelectedItem is ListBoxItem selectedTeamItem)
             {
-                // Find the unit in the actual team list based on the Tag (which holds the IUnit instance)
                 IUnit unitToRemove = selectedTeamItem.Value as IUnit;
                 if (unitToRemove != null)
                 {
-                    _currentlyEditingTeam.RemoveFighter(unitToRemove, null, true); // Refund money
+                    _currentlyEditingTeam.RemoveFighter(unitToRemove, null, true);
                     UpdateTeamDisplay();
                 }
             }
@@ -228,7 +221,6 @@ namespace QueueFightGame.UI
             redTeamListBox.Items.Clear();
             foreach (var unit in _redTeam.Fighters)
             {
-                // Store the actual unit instance in the Tag for removal later
                 var item = new ListBoxItem { Text = unit.Name, Value = unit };
                 redTeamListBox.Items.Add(item);
             }
@@ -242,7 +234,6 @@ namespace QueueFightGame.UI
             }
             blueMoneyLabel.Text = $"Бюджет: {_blueTeam.CurrentMoney:F0}";
 
-            // Enable Start button only if both teams have at least one fighter
             startBattleButton.Enabled = _redTeam.Fighters.Any() && _blueTeam.Fighters.Any();
         }
 
@@ -254,7 +245,7 @@ namespace QueueFightGame.UI
                 return;
             }
 
-            // Start the battle
+            // Start battle
             BattleForm battleForm = new BattleForm(_redTeam, _blueTeam);
             battleForm.Show();
             this.Hide();
@@ -265,29 +256,23 @@ namespace QueueFightGame.UI
         private void BackButton_Click(object sender, EventArgs e)
         {
             this.Close();
-            // Пытаемся найти и показать предыдущую форму
             var setupForm = System.Windows.Forms.Application.OpenForms.OfType<GameSetupForm>().FirstOrDefault();
             setupForm?.Show();
         }
 
-
-        // Required by designer
         private void InitializeComponent()
         {
             this.SuspendLayout();
-            //
-            // TeamPurchaseForm
-            //
+
             this.Name = "TeamPurchaseForm";
             this.ResumeLayout(false);
 
         }
 
-        // Helper class for ListBox items storing values
         private class ListBoxItem
         {
             public string Text { get; set; }
-            public object Value { get; set; } // Can store TypeName string or IUnit instance
+            public object Value { get; set; }
 
             public override string ToString()
             {

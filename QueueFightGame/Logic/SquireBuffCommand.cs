@@ -12,7 +12,7 @@ namespace QueueFightGame
 
         // State for Undo
         private BuffType _appliedBuffType = BuffType.None;
-        private ICanBeBuff _previousKnightBuff = null; // Store if knight already had a different buff
+        private ICanBeBuff _previousKnightBuff = null;
 
         public SquireBuffCommand(WeakFighter squire, StrongFighter knight, Team team, ILogger logger)
         {
@@ -24,42 +24,31 @@ namespace QueueFightGame
 
         public void Execute()
         {
-            // Restore state for Redo
             if (_appliedBuffType != BuffType.None)
             {
-                _squire.MarkBuffApplied(_knight); // Re-mark squire
-                                                  // Re-apply the specific buff that was chosen before
+                _squire.MarkBuffApplied(_knight);
+
                 ApplySpecificBuff(_appliedBuffType);
             }
-            else // First execution or Redo after failed Execute
+            else
             {
-                // Check if knight can receive buff (e.g., doesn't have a persistent buff already?)
-                // For now, let's assume we can always try to apply. StrongFighter.ApplyBuff handles existing buffs.
-
-                // Choose random buff
                 var possibleBuffs = new[] { BuffType.Spear, BuffType.Horse, BuffType.Shield, BuffType.Helmet };
                 _appliedBuffType = possibleBuffs[new Random().Next(possibleBuffs.Length)];
 
-                // Store previous buff for Undo, *before* applying new one
-                // This requires StrongFighter to expose its current buff instance or type
-                // Let's assume StrongFighter.CurrentBuffType exists
                 var existingBuffType = _knight.CurrentBuffType;
                 if (existingBuffType != BuffType.None)
                 {
-                    // Ideally store the actual ICanBeBuff instance, but type might be enough for simple restore
-                    // _previousKnightBuff = _knight.GetCurrentBuffInstance(); // Needs implementation in StrongFighter
                     _logger.Log($"Предупреждение: {_knight.Name} уже имел бафф {existingBuffType}. Он будет заменен.");
-                    // Force remove old buff? Let ApplySpecificBuff handle it.
                 }
 
 
                 if (ApplySpecificBuff(_appliedBuffType))
                 {
-                    _squire.MarkBuffApplied(_knight); // Link squire and knight
+                    _squire.MarkBuffApplied(_knight);
                 }
                 else
                 {
-                    _appliedBuffType = BuffType.None; // Mark as failed
+                    _appliedBuffType = BuffType.None;
                 }
             }
         }
@@ -74,11 +63,11 @@ namespace QueueFightGame
                 case BuffType.Horse: buffInstance = new HorseBuffDecorator(_knight); break;
                 case BuffType.Shield: buffInstance = new ShieldBuffDecorator(_knight); break;
                 case BuffType.Helmet: buffInstance = new HelmetBuffDecorator(_knight); break;
-                default: return false; // Should not happen
+                default: return false;
             }
 
-            _knight.ApplyBuff(buffInstance, _logger); // Apply the buff
-            _knight.SetSquire(_squire); // Link knight back to squire
+            _knight.ApplyBuff(buffInstance, _logger);
+            _knight.SetSquire(_squire);
             return true;
         }
 
@@ -87,16 +76,11 @@ namespace QueueFightGame
         {
             if (_appliedBuffType != BuffType.None)
             {
-                _squire.UnmarkBuffApplied(); // Unmark squire
-                _knight.RemoveBuff(_logger); // Remove the buff applied by this command
+                _squire.UnmarkBuffApplied();
+                _knight.RemoveBuff(_logger);
 
-                // Restore previous buff if one existed? This is complex.
-                // If _previousKnightBuff was stored, re-apply it here.
-                // if (_previousKnightBuff != null) { _knight.ApplyBuff(_previousKnightBuff, _logger); }
-
-                _appliedBuffType = BuffType.None; // Reset state
+                _appliedBuffType = BuffType.None;
             }
-            // Log handled by CommandManager
         }
     }
 }

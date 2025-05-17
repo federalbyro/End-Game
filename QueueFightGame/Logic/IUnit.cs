@@ -4,20 +4,19 @@
     public interface IUnit
     {
         string Name { get; }
-        int ID { get; } // Unique ID per instance might be useful
+        int ID { get; }
         float Health { get; set; }
-        float MaxHealth { get; } // Added for UI and healing caps
+        float MaxHealth { get; }
         float Protection { get; }
         float Damage { get; }
         float Cost { get; }
         string Description { get; }
-        string IconPath { get; } // Added for UI
+        string IconPath { get; }
         Team Team { get; set; }
 
-        void Attack(IUnit target, ILogger logger); // Pass logger
+        void Attack(IUnit target, ILogger logger);
     }
 
-    // Keep existing IWall interface (though WallAdapter implements IUnit)
     public interface IWall
     {
         string Name { get; }

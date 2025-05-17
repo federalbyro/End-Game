@@ -17,7 +17,7 @@ namespace QueueFightGame
         public string IconPath { get; private set; }
         public Team Team { get; set; }
         public override string ToString() => $"{Name}#{ID}";
-        protected BaseUnit(string typeName) // Constructor uses UnitConfig
+        protected BaseUnit(string typeName)
         {
             if (!UnitConfig.Stats.TryGetValue(typeName, out var data))
             {
@@ -25,7 +25,7 @@ namespace QueueFightGame
             }
 
             ID = _nextId++;
-            Name = data.DisplayName; // Use DisplayName for game display
+            Name = data.DisplayName;
             MaxHealth = data.Health;
             Health = data.Health;
             Protection = data.Protection;
@@ -35,41 +35,33 @@ namespace QueueFightGame
             IconPath = data.IconPath;
             Team = null;
         }
-
-        // Overloaded constructor for cloning to preserve ID/state if needed, but usually new ID is better
         protected BaseUnit(BaseUnit original, string cloneSuffix = "_clone")
         {
-            ID = _nextId++; // Clones get new IDs
+            ID = _nextId++;
             Name = original.Name + cloneSuffix;
             MaxHealth = original.MaxHealth;
-            Health = original.Health * 0.75f; // Clones start with less health? Or full? Decide rule. Let's say full for now.
+            Health = original.Health * 0.75f;
             Health = original.MaxHealth;
             Protection = original.Protection;
             Damage = original.Damage;
-            Cost = original.Cost; // Clones don't cost money to create in battle
+            Cost = original.Cost;
             Description = original.Description;
             IconPath = original.IconPath;
-            Team = original.Team; // Will be set correctly when added to team
+            Team = original.Team;
         }
 
 
         public virtual void Attack(IUnit target, ILogger logger)
         {
-            // Basic attack logic
-            float damageDealt = Math.Max(1, this.Damage * (1.0f - target.Protection)); // Ensure at least 1 damage, adjust formula as needed
+            float damageDealt = Math.Max(1, this.Damage * (1.0f - target.Protection));
             target.Health -= damageDealt;
             logger.Log($"{this.Name}|({this.ID}) ({this.Team.TeamName}) атакует {target.Name} ({target.Team.TeamName}) и наносит {damageDealt:F1} урона. Осталось здоровья у {target.Name}: {target.Health:F1}");
         }
 
-        // Base implementation for non-special units
-        public virtual bool HasUsedSpecial { get; set; } = false; // Default implementation
-        public virtual int SpecialActionChance => 0; // Default: no special action
+        public virtual bool HasUsedSpecial { get; set; } = false;
+        public virtual int SpecialActionChance => 0;
 
-        // Base implementation - does nothing unless overridden
-        public virtual void PerformSpecialAction(Team ownTeam, Team enemyTeam, ILogger logger, CommandManager commandManager)
-        {
-            // Do nothing by default
-        }
+        public virtual void PerformSpecialAction(Team ownTeam, Team enemyTeam, ILogger logger, CommandManager commandManager) { }
     }
 
     // --- Wall and Adapter ---
@@ -91,30 +83,20 @@ namespace QueueFightGame
 
     public class StoneWall : BaseWall
     {
-        // Uses fixed stats, not from UnitConfig directly unless we add walls there
         public StoneWall() : base("Каменная стена", 200, 0.3f) { }
     }
 
-    // WallAdapter adapts BaseWall to IUnit using data from UnitConfig
-    public class WallAdapter : BaseUnit, ICanBeHealed // Make walls healable? Optional.
+    public class WallAdapter : BaseUnit, ICanBeHealed
     {
-        private readonly BaseWall _wall; // Keep reference if needed, maybe for specific wall logic
+        private readonly BaseWall _wall;
 
-        public WallAdapter() : base(nameof(WallAdapter)) // Uses UnitConfig based on class name
-        {
-            // If specific wall type needed:
-            //_wall = wall ?? throw new ArgumentNullException(nameof(wall));
-            // Use wall stats if they differ significantly from UnitConfig
-            // MaxHealth = _wall.MaxHealth; Health = _wall.Health; Protection = _wall.Protection;
-        }
+        public WallAdapter() : base(nameof(WallAdapter)) { }
 
-        // Walls cannot attack
         public override void Attack(IUnit target, ILogger logger)
         {
             logger.Log($"{this.Name}|({this.ID}) ({this.Team.TeamName}) не может атаковать.");
         }
 
-        // Walls don't have special actions by default
         public override void PerformSpecialAction(Team ownTeam, Team enemyTeam, ILogger logger, CommandManager commandManager) { }
     }
 

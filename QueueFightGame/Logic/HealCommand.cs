@@ -6,11 +6,10 @@ namespace QueueFightGame
     {
         private readonly Healer _healer;
         private readonly ICanBeHealed _target;
-        private readonly int _maxHealAmount; // Max potential heal (e.g., Healer's Power)
+        private readonly int _maxHealAmount;
         private readonly Team _team;
         private readonly ILogger _logger;
 
-        // State for Undo
         private float _initialTargetHealth;
         private float _actualHealAmount;
 
@@ -27,12 +26,10 @@ namespace QueueFightGame
 
         public void Execute()
         {
-            // Restore state for Redo
             _target.Health = _initialTargetHealth;
 
-            // Calculate actual heal amount based on random power and health cap
-            int healRoll = new Random().Next(0, _maxHealAmount + 1); // Heal 0 to Power
-            _actualHealAmount = Math.Min(healRoll, _target.MaxHealth - _target.Health); // Don't overheal
+            int healRoll = new Random().Next(0, _maxHealAmount + 1);
+            _actualHealAmount = Math.Min(healRoll, _target.MaxHealth - _target.Health);
 
             if (_actualHealAmount > 0)
             {
@@ -42,18 +39,16 @@ namespace QueueFightGame
             else
             {
                 _logger.Log($"{_healer.Name}|({_healer.ID}) ({_team.TeamName}) пытается лечить {_target.Name}, но не может (цель здорова или не повезло с лечением).");
-                _actualHealAmount = 0; // Ensure it's 0 if no heal happened
+                _actualHealAmount = 0;
             }
         }
 
         public void Undo()
         {
-            // Simply subtract the actual amount healed
             if (_actualHealAmount > 0)
             {
                 _target.Health -= _actualHealAmount;
             }
-            // Log handled by CommandManager
         }
     }
 }

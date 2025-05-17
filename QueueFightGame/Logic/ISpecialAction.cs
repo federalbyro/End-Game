@@ -2,16 +2,13 @@
 
 namespace QueueFightGame
 {
-    // Combine interfaces for clarity or keep separate if preferred
     public interface ISpecialActionUnit : IUnit
     {
-        bool HasUsedSpecial { get; set; } // To limit certain actions per turn/battle
-        int SpecialActionChance { get; } // Probability (0-100)
-        void PerformSpecialAction(Team ownTeam, Team enemyTeam, ILogger logger, CommandManager commandManager); // Unified method
+        bool HasUsedSpecial { get; set; }
+        int SpecialActionChance { get; }
+        void PerformSpecialAction(Team ownTeam, Team enemyTeam, ILogger logger, CommandManager commandManager);
     }
 
-    // Specific interfaces can still exist for type checking if needed,
-    // but the core logic can be driven by ISpecialActionUnit.
     public interface ISpecialActionHealer : ISpecialActionUnit
     {
         int HealRange { get; }
@@ -32,6 +29,6 @@ namespace QueueFightGame
     public interface ISpecialActionWeakFighter : ISpecialActionUnit
     {
         int BuffRange { get; }
-        bool HasAppliedBuff { get; } // Specific state for squire
+        bool HasAppliedBuff { get; }
     }
 }
